@@ -8,15 +8,39 @@
   ],
   "routes": [
     {
+      "src": "/style\\.css",
+      "dest": "/style.css"
+    },
+    {
+      "src": "/script\\.js",
+      "dest": "/script.js"
+    },
+    {
+      "src": "/manifest\\.json",
+      "dest": "/manifest.json"
+    },
+    {
+      "src": "/sw\\.js",
+      "dest": "/sw.js"
+    },
+    {
       "src": "/css/(.*)",
-      "dest": "/server.js"
+      "dest": "/css/$1"
     },
     {
       "src": "/js/(.*)",
-      "dest": "/server.js"
+      "dest": "/js/$1"
     },
     {
-      "src": "/frontend/(.*)",
+      "src": "/frontend/css/(.*)",
+      "dest": "/frontend/css/$1"
+    },
+    {
+      "src": "/frontend/js/(.*)",
+      "dest": "/frontend/js/$1"
+    },
+    {
+      "src": "/(.*\\.html)",
       "dest": "/server.js"
     },
     {
