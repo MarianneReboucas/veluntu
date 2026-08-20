@@ -1,0 +1,332 @@
+/* VELUNTU - Minha Coleção & Minha Jornada (Design Estritamente Neutro) */
+@import url('./variables.css');
+
+/* Modal Fullscreen / Drawer */
+.journal-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-primary);
+  z-index: 2500;
+  overflow-y: auto;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.journal-modal.active {
+  display: block;
+  opacity: 1;
+}
+
+.journal-header {
+  position: sticky;
+  top: 0;
+  background: rgba(250, 249, 246, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-medium);
+  padding: var(--space-sm) var(--space-lg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+}
+
+.journal-tabs-nav {
+  display: flex;
+  gap: 12px;
+  background: var(--bg-secondary);
+  padding: 4px;
+  border-radius: 20px;
+  border: 1px solid var(--border-medium);
+}
+
+.journal-tab-btn {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 8px 18px;
+  border-radius: 16px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  transition: var(--transition-fast);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.journal-tab-btn.active {
+  background: var(--accent-neutral);
+  color: var(--text-inverse);
+}
+
+.journal-badge-count {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.25);
+  color: currentColor;
+}
+
+.journal-body {
+  padding: var(--space-xl) 0;
+}
+
+/* Empty States */
+.journal-empty-state {
+  text-align: center;
+  max-width: 520px;
+  margin: var(--space-2xl) auto;
+  padding: var(--space-xl);
+  background: var(--bg-secondary);
+  border: 1px dashed var(--border-medium);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.journal-empty-title {
+  font-size: 1.8rem;
+  font-weight: 300;
+  color: var(--text-primary);
+}
+
+.journal-empty-desc {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* Collection Cards Grid */
+.journal-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+}
+
+@media (min-width: 768px) {
+  .journal-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1100px) {
+  .journal-cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.journal-item-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-medium);
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition-fast);
+}
+
+.journal-item-card:hover {
+  border-color: var(--text-primary);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.04);
+}
+
+.journal-card-media {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  background: var(--bg-tertiary);
+  overflow: hidden;
+}
+
+.journal-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(80%);
+}
+
+.journal-card-content {
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  flex-grow: 1;
+}
+
+.journal-card-title {
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+
+.journal-card-desc {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: var(--space-xs);
+}
+
+.journal-card-actions {
+  margin-top: auto;
+  padding-top: var(--space-xs);
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* Journey Timeline */
+.journey-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.journey-step-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-medium);
+  border-radius: 4px;
+  padding: var(--space-md);
+  display: grid;
+  grid-template-columns: 45px 100px 1fr auto;
+  gap: var(--space-md);
+  align-items: center;
+  position: relative;
+}
+
+@media (max-width: 600px) {
+  .journey-step-card {
+    grid-template-columns: 1fr;
+    gap: var(--space-xs);
+  }
+}
+
+.journey-step-number {
+  font-family: var(--font-mono);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.journey-step-img-frame {
+  width: 100px;
+  height: 70px;
+  background: var(--bg-tertiary);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.journey-step-img-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(80%);
+}
+
+.journey-step-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.journey-step-reorder {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.reorder-btn {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border-medium);
+  border-radius: 4px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.reorder-btn:hover:not(:disabled) {
+  background: var(--accent-neutral);
+  color: var(--text-inverse);
+}
+
+.reorder-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.reorder-btn.remove:hover {
+  background: #222;
+  color: #FFF;
+}
+
+/* Toast Notifications */
+.veluntu-toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--bg-dark);
+  color: var(--text-light);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  padding: 10px 20px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  z-index: 4000;
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  border: 1px solid var(--border-dark);
+}
+
+.veluntu-toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+/* Floating Journal Launcher Button */
+.floating-journal-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--accent-neutral);
+  color: var(--text-inverse);
+  padding: 12px 20px;
+  border-radius: 30px;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  z-index: 1500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.15);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.floating-journal-btn:hover {
+  background: var(--accent-hover);
+  transform: translateY(-3px);
+}

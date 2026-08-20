@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VELUNTU — Dossiê de Destino</title>
+
+  <meta name="theme-color" content="#FAF9F6">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>V</text></svg>">
+
+  <!-- CSS Core & Destination Modules -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/destination.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+
+  <!-- Offline Status Banner -->
+  <div class="offline-banner" id="offlineBanner">
+    &bull; Você está navegando em modo offline. O acervo salvo no seu Caderno Veluntu permanece disponível.
+  </div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container header-container">
+      <a href="index.html" class="brand-logo">
+        <span class="brand-title">VELUNTU</span>
+        <span class="brand-subtitle">DOSSIÊ EDITORIAL DE CAMPO</span>
+      </a>
+
+      <nav class="nav-desktop">
+        <a href="index.html#continente" class="nav-link">&larr; Voltar ao Continente</a>
+        <a href="index.html#mapa" class="nav-link">Ver no Mapa</a>
+        <a href="#experiencias" class="nav-link">Experiências</a>
+        <a href="#lugares" class="nav-link">Lugares</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="pwa-badge">
+          <span class="pwa-dot"></span>
+          <span>PWA ATIVO</span>
+        </div>
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir Menu">
+          <span class="menu-line"></span>
+          <span class="menu-line"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Fullscreen Drawer Navigation -->
+  <nav class="mobile-nav" id="mobileNav">
+    <span class="mono-meta" style="margin-top: 10px;">NAVEGAÇÃO DO DOSSIÊ</span>
+    <div class="mobile-nav-links">
+      <a href="index.html" class="mobile-nav-item">
+        Voltar à Home <span>01</span>
+      </a>
+      <a href="#contexto" class="mobile-nav-item">
+        Contexto Cultural <span>02</span>
+      </a>
+      <a href="#lugares" class="mobile-nav-item">
+        Lugares Notáveis <span>03</span>
+      </a>
+      <a href="#experiencias" class="mobile-nav-item">
+        Eixos &amp; Experiências <span>04</span>
+      </a>
+    </div>
+  </nav>
+
+  <main>
+    <!-- HERO EDITORIAL (VISUAL INTRODUCTION OF THE COUNTRY) -->
+    <section class="dest-hero">
+      <div class="container">
+        <div class="dest-hero-grid">
+          <div>
+            <div class="dest-hero-meta">
+              <span class="editorial-tag" id="destHeroRegion">Carregando...</span>
+              <span class="mono-meta" id="destHeroCoords">0.0000° N, 0.0000° E</span>
+            </div>
+
+            <h1 class="dest-hero-title" id="destHeroTitle">Carregando...</h1>
+            <p class="dest-hero-subtitle" id="destHeroSubtitle"></p>
+
+            <div class="dest-quote-box" style="margin-top: 24px;">
+              <blockquote id="destHeroQuote">
+                "..."
+              </blockquote>
+            </div>
+
+            <div style="margin-top: 28px; display: flex; gap: 12px; flex-wrap: wrap;">
+              <a href="#experiencias" class="btn-editorial">
+                Explorar Experiências &darr;
+              </a>
+              <a href="#lugares" class="btn-editorial-secondary">
+                Lugares Notáveis
+              </a>
+            </div>
+          </div>
+
+          <div class="dest-hero-frame">
+            <img class="dest-hero-img" id="destHeroImg" src="" alt="Imagem Editorial do País" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTEXTO CULTURAL & ALMA DO TERRITÓRIO -->
+    <section class="dest-culture-section" id="contexto">
+      <div class="container">
+        <div class="dest-culture-grid">
+          <div>
+            <span class="editorial-tag">Dimensão Antropológica &amp; Cultural</span>
+            <h2 style="margin-top: 12px; margin-bottom: 20px;">Contexto &amp; Identidade</h2>
+            <p id="destCultureIntro" style="font-size: 1.1rem; line-height: 1.8; color: var(--text-primary);"></p>
+          </div>
+
+          <div style="background: var(--bg-card); padding: var(--space-lg); border: 1px solid var(--border-medium); border-radius: 4px;">
+            <span class="mono-meta">PILARES DA IDENTIDADE</span>
+            <ul id="destCulturePoints" style="list-style: none; margin-top: 16px;">
+              <!-- Injected via JS -->
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LUGARES PARA CONHECER (COMPOSIÇÃO ASSIMÉTRICA) -->
+    <section class="dest-places-section" id="lugares">
+      <div class="container">
+        <span class="editorial-tag">Geografia Sentimental</span>
+        <h2>Lugares Notáveis para Conhecer</h2>
+        <p>
+          Formações geológicas, refúgios urbanos e centros históricos escolhidos pela profundidade estética e narrativa.
+        </p>
+
+        <div class="dest-places-grid" id="destPlacesGrid">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIÊNCIAS DISPONÍVEIS & NAVEGAÇÃO POR CATEGORIAS/INTERESSES -->
+    <section style="padding: var(--space-2xl) 0; background-color: var(--bg-primary);" id="experiencias">
+      <div class="container">
+        <div style="margin-bottom: var(--space-xl);">
+          <span class="editorial-tag">Seletor de Afinidade</span>
+          <h2>Experiências por Categoria</h2>
+          <p>
+            Filtre as expedições e vivências de acordo com o que melhor se conecta ao seu olhar.
+          </p>
+        </div>
+
+        <!-- CATEGORY FILTER PILL BAR -->
+        <nav class="category-filter-nav">
+          <button class="category-pill-btn active" data-category="all">Todos os Eixos</button>
+          <button class="category-pill-btn" data-category="historia">História</button>
+          <button class="category-pill-btn" data-category="cultura">Cultura</button>
+          <button class="category-pill-btn" data-category="aventura">Aventura</button>
+          <button class="category-pill-btn" data-category="gastronomia">Gastronomia</button>
+          <button class="category-pill-btn" data-category="natureza">Natureza</button>
+          <button class="category-pill-btn" data-category="vida-selvagem">Vida Selvagem</button>
+        </nav>
+
+        <!-- EXPERIENCES CONTAINER -->
+        <div class="experiences-container" id="destExperiencesGrid">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- NEXT DESTINATION FOOTER LINK -->
+    <section class="next-dest-nav" id="nextDestNav">
+      <!-- Injected via JS -->
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border-top: none; padding-top: 0;">
+        <span>&copy; 2026 VELUNTU EXPERIÊNCIAS CULTURAIS • TODOS OS DIREITOS RESERVADOS</span>
+        <span><a href="index.html" style="color: #AAA;">&larr; Voltar à Página Principal</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/destination.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

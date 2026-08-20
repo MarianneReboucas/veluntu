@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cairo & Gizé — Pacotes de Viagem Exclusivos | VELUNTU</title>
+  <meta name="description" content="Pacotes de viagem autoriais para Cairo & Gizé. Hospedagens de alto padrão, restaurantes selecionados, experiências faraônicas e voos inclusos.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+  <link rel="stylesheet" href="style.css">
+  
+  <style>
+    /* Estilos específicos para a página de Pacotes Cairo & Gizé */
+    .pacote-hero {
+      background: linear-gradient(180deg, rgba(13, 29, 6, 0.6) 0%, rgba(13, 29, 6, 0.95) 100%), url('https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?auto=format&fit=crop&w=2000&q=80');
+      background-size: cover;
+      background-position: center;
+      padding: 140px 0 60px;
+      color: #FFFFFF;
+      text-align: center;
+    }
+
+    .pacote-tabs-nav {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: -35px auto 40px;
+      position: relative;
+      z-index: 10;
+      max-width: 1100px;
+      padding: 0 20px;
+    }
+
+    .pacote-tab-btn {
+      background: #FFFFFF;
+      color: var(--color-green);
+      border: 1px solid var(--border-light);
+      padding: 16px 28px;
+      border-radius: 40px;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      transition: var(--transition-smooth);
+    }
+
+    .pacote-tab-btn:hover {
+      border-color: var(--color-orange);
+      color: var(--color-orange);
+      transform: translateY(-3px);
+    }
+
+    .pacote-tab-btn.active {
+      background-color: var(--color-green);
+      color: #FFFFFF;
+      border-color: var(--color-green);
+      box-shadow: 0 12px 28px rgba(23, 50, 11, 0.3);
+    }
+
+    .pacote-tab-content {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .pacote-tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Cards Grid para Hospedagem, Restaurantes, Experiências */
+    .pacotes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 30px;
+      margin-top: 30px;
+    }
+
+    .item-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+      transition: var(--transition-smooth);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .item-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--color-orange);
+      box-shadow: 0 20px 40px rgba(23, 50, 11, 0.1);
+    }
+
+    .item-card-img {
+      height: 220px;
+      width: 100%;
+      object-fit: cover;
+    }
+
+    .item-card-body {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .item-badge {
+      font-size: 0.75rem;
+      letter-spacing: 1.5px;
+      color: var(--color-orange);
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .item-title {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      color: var(--color-green);
+      margin-bottom: 10px;
+    }
+
+    .item-desc {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      margin-bottom: 20px;
+      line-height: 1.6;
+      flex-grow: 1;
+    }
+
+    .item-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .item-price {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      color: var(--color-green);
+      font-size: 1.1rem;
+    }
+
+    /* Mapa do Pacote */
+    .mapa-pacote-wrapper {
+      height: 480px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border-light);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.08);
+      margin-top: 20px;
+    }
+
+    /* Flight Search Bar (Inspirado no buscador de voos) */
+    .flight-search-container {
+      background-color: #2D0B6B; /* Roxo escuro profundo da imagem */
+      border-radius: 12px;
+      padding: 28px;
+      color: #FFFFFF;
+      margin-bottom: 35px;
+      box-shadow: 0 16px 40px rgba(45, 11, 107, 0.25);
+    }
+
+    .flight-search-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .flight-search-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .flight-select-box {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: #FFFFFF;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .flight-select-box option {
+      background-color: #2D0B6B;
+      color: #FFFFFF;
+    }
+
+    .flight-input-group {
+      display: flex;
+      align-items: center;
+      background: #FFFFFF;
+      border-radius: 8px;
+      padding: 4px 12px;
+      flex: 1;
+      min-width: 220px;
+      position: relative;
+    }
+
+    .flight-input-group input {
+      border: none;
+      outline: none;
+      background: transparent;
+      padding: 10px 8px;
+      width: 100%;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      color: #141414;
+    }
+
+    .flight-input-icon {
+      color: #666;
+      font-size: 1.1rem;
+      margin-right: 4px;
+    }
+
+    .flight-swap-btn {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: bold;
+      color: #333;
+      margin: 0 -5px;
+      z-index: 2;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    .flight-dates-group {
+      display: flex;
+      align-items: center;
+      background: #FFFFFF;
+      border-radius: 8px;
+      padding: 4px 16px;
+      gap: 12px;
+      color: #333;
+      min-width: 240px;
+    }
+
+    .flight-date-input {
+      border: none;
+      outline: none;
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      width: 100%;
+      color: #333;
+    }
+
+    .flight-passengers-btn {
+      background: #FFFFFF;
+      border-radius: 8px;
+      padding: 12px 18px;
+      color: #333;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .flight-search-btn {
+      background: #E50914; /* Botão vermelho chamativo como na imagem */
+      color: #FFFFFF;
+      border: none;
+      border-radius: 8px;
+      padding: 14px 28px;
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s ease, transform 0.2s ease;
+      box-shadow: 0 4px 14px rgba(229, 9, 20, 0.4);
+    }
+
+    .flight-search-btn:hover {
+      background: #C10711;
+      transform: translateY(-2px);
+    }
+
+    .flight-switch-row {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+    }
+
+    .voo-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      border: 1px solid var(--border-light);
+      border-radius: 6px;
+      margin-bottom: 16px;
+      background: #FAF8F5;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .voo-info h5 {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      color: var(--color-green);
+    }
+
+    .voo-info p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .voo-badge {
+      background: rgba(204, 122, 0, 0.1);
+      color: var(--color-orange);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header / Navbar -->
+  <header class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo-btn">
+        <span class="logo-text">VELUNTU</span>
+        <span class="logo-subtext">TRAVEL DESIGN &bull; ÁFRICA</span>
+      </a>
+      
+      <nav class="nav-menu" id="navMenu">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="egito.html" class="nav-link">&larr; Voltar ao Egito</a>
+        <a href="#pacotes" class="nav-link active">Pacote Cairo &amp; Gizé</a>
+        <a href="planejar.html" class="nav-link highlight">Reservar Pacote</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="planejar.html" class="btn btn-primary btn-sm">Solicitar Orçamento</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Cairo & Gizé -->
+  <section class="pacote-hero">
+    <div class="container">
+      <span class="badge" style="background: rgba(204,122,0,0.2); color: #FFB347; border-color: #FFB347;">PACOTE DE VIAGEM COMPLETO</span>
+      <h1 class="hero-title" style="color: #FFFFFF; font-size: 3.2rem; margin-top: 10px;">Cairo &amp; Gizé sob Medida</h1>
+      <p class="hero-subtitle" style="color: rgba(255,255,255,0.9); max-width: 700px; margin: 0 auto;">
+        Sua expedição completa para as Pirâmides e o Grande Museu Egípcio. Hospedagem de luxo a passos das relíquias, gastronomia estrelada, voos executivos e experiências privativas.
+      </p>
+    </div>
+  </section>
+
+  <!-- Navegação de Abas do Pacote -->
+  <div class="pacote-tabs-nav">
+    <button class="pacote-tab-btn active" onclick="switchTab('hospedagem', this)">
+      <span>🏨 Hospedagem Próxima</span>
+    </button>
+    <button class="pacote-tab-btn" onclick="switchTab('restaurantes', this)">
+      <span>🍽️ Restaurantes Selecionados</span>
+    </button>
+    <button class="pacote-tab-btn" onclick="switchTab('experiencias', this)">
+      <span>✦ Experiências Exclusivas</span>
+    </button>
+    <button class="pacote-tab-btn" onclick="switchTab('passagens', this)">
+      <span>✈️ Passagens &amp; Traslados</span>
+    </button>
+    <button class="pacote-tab-btn" onclick="switchTab('mapa', this)">
+      <span>📍 Mapa Interativo do Pacote</span>
+    </button>
+  </div>
+
+  <!-- Conteúdo das Abas -->
+  <section class="section" style="padding-top: 10px;">
+    <div class="container">
+      
+      <!-- ABA 1: HOSPEDAGEM -->
+      <div id="hospedagem" class="pacote-tab-content active">
+        <div class="section-header text-center">
+          <span class="section-tag">HOSPEDAGEM EXCLUSIVA</span>
+          <h2 class="section-title">Hotéis Próximos às Pirâmides &amp; ao Nilo</h2>
+          <p class="section-description">Refúgios de 5 estrelas com vista panorâmica direta para as Pirâmides de Gizé ou para as águas calmas do Rio Nilo.</p>
+        </div>
+
+        <div class="pacotes-grid">
+          <!-- Hotel 1 -->
+          <article class="item-card">
+            <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80" alt="Marriott Mena House" class="item-card-img">
+            <div class="item-card-body">
+              <span class="item-badge">VISTA DIRETA PARA AS PIRÂMIDES (500m)</span>
+              <h3 class="item-title">Marriott Mena House, Cairo</h3>
+              <p class="item-desc">Palácio histórico cercado por 40 acres de jardins aromáticos com suítes privativas que oferecem o café da manhã contemplando a Pirâmide de Quéops.</p>
+              <div class="item-footer">
+                <span class="item-price">Incluído no Pacote Luxo</span>
+                <a href="planejar.html" class="btn btn-primary btn-sm">Selecionar Hotel</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Hotel 2 -->
+          <article class="item-card">
+            <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80" alt="Four Seasons First Residence" class="item-card-img">
+            <div class="item-card-body">
+              <span class="item-badge">ÀS MARGENS DO RIO NILO</span>
+              <h3 class="item-title">Four Seasons First Residence</h3>
+              <p class="item-desc">Hospitalidade egípcia impecável no coração do Cairo com vista espetacular para o Nilo, spa exclusivo e acesso facilitado aos monumentos de Gizé.</p>
+              <div class="item-footer">
+                <span class="item-price">Incluído no Pacote Premium</span>
+                <a href="planejar.html" class="btn btn-primary btn-sm">Selecionar Hotel</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Hotel 3 -->
+          <article class="item-card">
+            <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80" alt="The St. Regis Cairo" class="item-card-img">
+            <div class="item-card-body">
+              <span class="item-badge">ELEGÂNCIA CONTEMPORÂNEA</span>
+              <h3 class="item-title">The St. Regis Cairo</h3>
+              <p class="item-desc">Design arrojado com serviço de mordomo privativo 24h, ideal para quem deseja explorar o Grande Museu Egípcio e a vida cultural do Cairo.</p>
+              <div class="item-footer">
+                <span class="item-price">Opção Suíte Presidencial</span>
+                <a href="planejar.html" class="btn btn-primary btn-sm">Selecionar Hotel</a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <!-- ABA 2: RESTAURANTES -->
+      <div id="restaurantes" class="pacote-tab-content">
+        <div class="section-header text-center">
+          <span class="section-tag">ALTA GASTRONOMIA</span>
+          <h2 class="section-title">Restaurantes e Experiências Culinárias</h2>
+          <p class="section-description">Reserva de mesas prioritárias nos restaurantes mais sofisticados e icônicos de Gizé e do Cairo.</p>
+        </div>
+
+        <div class="pacotes-grid">
+          <!-- Restaurante 1 -->
+          <article class="item-card">
+            <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80" alt="9 Pyramids Lounge" class="item-card-img">
+            <div class="item-card-body">
+              <span class="item-badge">GASTRONOMIA NO PLANALTO DE GIZÉ</span>
+              <h3 class="item-title">9 Pyramids Lounge</h3>
+              <p class="item-desc">Jantar exclusivo situado literalmente dentro do complexo de Gizé, com vista para as 9 pirâmides ao pôr do sol e pratos egípcios refinados.</p>
+              <div class="item-footer">
+                <span class="item-price">Reserva &amp; Menu Degustação</span>
+                <span class="btn-link">Incluído</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Restaurante 2 -->
+          <article class="item-card">
+            <img src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=800&q=80" alt="The Moghul Room" class="item-card-img">
+            <div class="item-card-body">
+              <span class="item-badge">ICÔNICO &amp; HISTÓRICO</span>
+              <h3 class="item-title">The Moghul Room (Mena House)</h3>
+              <p class="item-desc">Reconhecido como um dos restaurantes indianos mais aclamados do Oriente Médio, servindo banquetes reais aos pés das pirâmides.</p>
+              <div class="item-footer">
+                <span class="item-price">Menu Harmonizado</span>
+                <span class="btn-link">Incluído</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Restaurante 3 -->
+          <article class="item-card">
+            <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80" alt="Nile Maxim Dinner Cruise" class="item-card-img">
+            <div class="item-card-body">
+              <span class="item-badge">GASTRONOMIA A BORDO</span>
+              <h3 class="item-title">Nile Maxim Dinner Cruise</h3>
+              <p class="item-desc">Jantar gourmet em navio elegante navegando pelas luzes noturnas do Rio Nilo acompanhado de apresentações culturais de música e dança.</p>
+              <div class="item-footer">
+                <span class="item-price">Jantar Privativo</span>
+                <span class="btn-link">Incluído</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <!-- ABA 3: EXPERIÊNCIAS -->
+      <div id="experiencias" class="pacote-tab-content">
+        <div class="section-header text-center">
+          <span class="section-tag">CURADORIA AUTORAL</span>
+          <h2 class="section-title">Experiências Faraônicas Privativas</h2>
+          <p class="section-description">Acesso exclusivo sem filas, egiptólogo dedicado e vivências memoráveis em Gizé e no Cairo.</p>
+        </div>
+
+        <div class="pacotes-grid">
+          <!-- Experiência 1 -->
+          <article class="item-card">
+            <img src="https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?auto=format&fit=crop&w=800&q=80" alt="Entrada VIP nas Pirâmides" class="item-card-img">
+            <div class="item-card-body">
+              <span class="item-badge">ACESSO ANTES DA ABERTURA PÚBLICA</span>
+              <h3 class="item-title">Acesso VIP ao Complexo de Gizé &amp; Esfinge</h3>
+              <p class="item-desc">Visite a Grande Pirâmide de Quéops e fique entre as patas da lendária Esfinge com autorização governamental exclusiva e egiptólogo privativo.</p>
+              <div class="item-footer">
+                <span class="item-price">Guia Egiptólogo Privativo</span>
+                <span class="btn-link">Incluído</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Experiência 2 -->
+          <article class="item-card">
+            <img src="https://images.unsplash.com/photo-1568322445389-f64ac2515020?auto=format&fit=crop&w=800&q=80" alt="Grande Museu Egípcio" class="item-card-img">
+            <div class="item-card-body">
+              <span class="item-badge">O MAIOR MUSEU ARQUEOLÓGICO DO MUNDO</span>
+              <h3 class="item-title">Tour Privado no Grande Museu Egípcio (GEM)</h3>
+              <p class="item-desc">Contemple em primeira mão toda a coleção dos tesouros de Tutancâmon em galerias modernas projetadas para a eternidade.</p>
+              <div class="item-footer">
+                <span class="item-price">Ingressos Fast-Pass</span>
+                <span class="btn-link">Incluído</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Experiência 3 -->
+          <article class="item-card">
+            <img src="https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=800&q=80" alt="Voo de Balão ao Pôr do Sol" class="item-card-img">
+            <div class="item-card-body">
+              <span class="item-badge">VISTA AÉREA PANORÂMICA</span>
+              <h3 class="item-title">Voo Privativo de Balão sobre Saqqara e Gizé</h3>
+              <p class="item-desc">Sobrevoe a Pirâmide de Graus de Djoser e o mar de areia da savana egípcia em um momento inesquecível ao amanhecer.</p>
+              <div class="item-footer">
+                <span class="item-price">Experiência Opcional</span>
+                <span class="btn-link">Incluído</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <!-- ABA 4: PASSAGENS & TRASLADOS -->
+      <div id="passagens" class="pacote-tab-content">
+        <div class="section-header text-center">
+          <span class="section-tag">LOGÍSTICA &amp; CONFORTO</span>
+          <h2 class="section-title">Passagens Aéreas &amp; Traslados de Luxo</h2>
+          <p class="section-description">Acompanhamento concierge desde o embarque no Brasil até o desembarque com recepção VIP no Aeroporto do Cairo (CAI).</p>
+        </div>
+
+        <!-- BARRA DE BUSCA DE PASSAGENS AÉREAS (IDÊNTICA À IMAGEM) -->
+        <h2 style="font-family: var(--font-body); font-size: 2.2rem; font-weight: 700; color: #141414; margin-bottom: 24px;">Passagens aéreas baratas e voos</h2>
+        
+        <div class="flight-search-container">
+          <div class="flight-search-title">
+            <span>Passagens aéreas</span>
+          </div>
+
+          <div class="flight-search-bar">
+            <!-- Seleção Tipo de Voo -->
+            <select class="flight-select-box" id="flightType">
+              <option value="roundtrip">Ida e volta</option>
+              <option value="oneway">Somente ida</option>
+              <option value="multicity">Múltiplos destinos</option>
+            </select>
+
+            <!-- Origem -->
+            <div class="flight-input-group">
+              <span class="flight-input-icon">⭕</span>
+              <input type="text" id="flightOrigin" value="São Paulo (GRU)" placeholder="Origem">
+            </div>
+
+            <!-- Botão de Inverter Origem/Destino -->
+            <button type="button" class="flight-swap-btn" title="Inverter origem e destino" onclick="swapAirports()">
+              &#8644;
+            </button>
+
+            <!-- Destino -->
+            <div class="flight-input-group">
+              <span class="flight-input-icon">📍</span>
+              <input type="text" id="flightDestination" value="Cairo & Gizé (CAI)" placeholder="Destino">
+            </div>
+
+            <!-- Datas Ida / Volta -->
+            <div class="flight-dates-group">
+              <div style="display: flex; align-items: center; gap: 6px; flex: 1;">
+                <span>📅</span>
+                <input type="text" class="flight-date-input" id="flightDateDeparture" value="15 Out" placeholder="Ida">
+              </div>
+              <span style="color: #CBD5E1;">|</span>
+              <div style="display: flex; align-items: center; gap: 6px; flex: 1;">
+                <input type="text" class="flight-date-input" id="flightDateReturn" value="25 Out" placeholder="Volta">
+              </div>
+            </div>
+
+            <!-- Passageiros -->
+            <button type="button" class="flight-passengers-btn" onclick="alert('Selecione a quantidade de passageiros no formulário abaixo.')">
+              👤 <span>1</span>
+            </button>
+
+            <!-- Botão Buscar -->
+            <button type="button" class="flight-search-btn" onclick="searchFlights()">
+              🔍 Buscar
+            </button>
+          </div>
+
+          <!-- Switch SOFIA -->
+          <div class="flight-switch-row">
+            <label style="cursor: pointer; display: flex; align-items: center; gap: 8px;">
+              <input type="checkbox" checked style="accent-color: #E50914; width: 18px; height: 18px;">
+              <span style="font-weight: 600; font-size: 0.85rem;">ASSISTENTE DE RESERVA SOFIA</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="passagens-container">
+          <h4 style="font-family: var(--font-heading); color: var(--color-green); margin-bottom: 20px; font-size: 1.4rem;">✈️ Opções de Voos Inclusos &amp; Disponíveis para Cairo</h4>
+          
+          <div class="voo-card">
+            <div class="voo-info">
+              <h5>Emirates / Qatar Airways (Classe Executiva)</h5>
+              <p>São Paulo (GRU) &rarr; Cairo (CAI) | Bagagem: 2x 32kg | Serviço de bordo premiado</p>
+            </div>
+            <span class="voo-badge">CLASSE EXECUTIVA LUXO</span>
+          </div>
+
+          <div class="voo-card">
+            <div class="voo-info">
+              <h5>EgyptAir (Voo Direto / Conexão Rápida)</h5>
+              <p>São Paulo (GRU) &rarr; Cairo (CAI) | Acesso a Lounges VIP nos aeroportos</p>
+            </div>
+            <span class="voo-badge">VOO CONVENIENTE</span>
+          </div>
+
+          <div style="margin-top: 30px; border-top: 1px solid var(--border-light); padding-top: 24px;">
+            <h4 style="font-family: var(--font-heading); color: var(--color-green); margin-bottom: 12px; font-size: 1.3rem;">🚘 Traslados Privativos Incluídos no Egito</h4>
+            <ul style="color: var(--text-muted); line-height: 2; margin-left: 20px;">
+              <li>Recepção Fast-Track no Aeroporto do Cairo com agilização de visto de entrada.</li>
+              <li>Veículos executivos SUV (Mercedes-Benz / BMW) com motorista particular à disposição durante toda a estadia.</li>
+              <li>Traslado privativo entre os hotéis do Cairo, Gizé e o Grande Museu Egípcio.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABA 5: MAPA INTERATIVO -->
+      <div id="mapa" class="pacote-tab-content">
+        <div class="section-header text-center">
+          <span class="section-tag">GEOLOCALIZAÇÃO DO PACOTE</span>
+          <h2 class="section-title">Mapa de Cairo &amp; Gizé</h2>
+          <p class="section-description">Confira a proximidade exata entre os hotéis do pacote, os restaurantes e as Pirâmides de Gizé.</p>
+        </div>
+
+        <div class="mapa-pacote-wrapper" id="pacoteMap"></div>
+      </div>
+
+      <!-- CTA FINAL DO PACOTE -->
+      <div class="cta-box" style="margin-top: 60px;">
+        <div class="cta-header text-center">
+          <span class="section-tag light">RESERVE SEU PACOTE</span>
+          <h2 class="section-title light">Pronto para Vivenciar Cairo &amp; Gizé?</h2>
+          <p class="section-description light">Personalize as datas, escolha os hotéis preferidos e deixe nossos designers de viagem cuidarem de cada detalhe.</p>
+        </div>
+
+        <form class="cta-form" onsubmit="event.preventDefault(); alert('Solicitação de pacote para Cairo & Gizé enviada com sucesso! Um especialista Veluntu entrará em contato em instantes.');">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="pName">Nome Completo</label>
+              <input type="text" id="pName" placeholder="Seu nome" required>
+            </div>
+            <div class="form-group">
+              <label for="pEmail">E-mail</label>
+              <input type="email" id="pEmail" placeholder="seu@email.com" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="pPhone">WhatsApp</label>
+              <input type="tel" id="pPhone" placeholder="+55 (00) 00000-0000">
+            </div>
+            <div class="form-group">
+              <label for="pDates">Período Desejado / Pessoas</label>
+              <input type="text" id="pDates" placeholder="Ex: Outubro/2026 - 2 pessoas">
+            </div>
+          </div>
+          <div class="text-center">
+            <button type="submit" class="btn btn-primary btn-lg">Solicitar Cotação do Pacote Cairo &amp; Gizé</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container text-center">
+      <p>&copy; 2026 VELUNTU Travel Design. Roteiros de Alta Categoria pelo Continente Africano.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script>
+    // Inverter Origem e Destino do buscador de voos
+    function swapAirports() {
+      const originInput = document.getElementById('flightOrigin');
+      const destInput = document.getElementById('flightDestination');
+      if (originInput && destInput) {
+        const temp = originInput.value;
+        originInput.value = destInput.value;
+        destInput.value = temp;
+      }
+    }
+
+    // Ação ao Clicar em Buscar Voos
+    function searchFlights() {
+      const origin = document.getElementById('flightOrigin').value;
+      const dest = document.getElementById('flightDestination').value;
+      const departure = document.getElementById('flightDateDeparture').value;
+      const returnDate = document.getElementById('flightDateReturn').value;
+
+      alert(`🔍 Buscando melhores voos de ${origin} para ${dest} (${departure} - ${returnDate})...\n\nVoos encontrados com transferência VIP inclusa para Cairo & Gizé!`);
+    }
+
+    // Troca de Abas
+    function switchTab(tabId, btnElement) {
+      document.querySelectorAll('.pacote-tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      document.querySelectorAll('.pacote-tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      document.getElementById(tabId).classList.add('active');
+      btnElement.classList.add('active');
+
+      if (tabId === 'mapa') {
+        setTimeout(initPacoteMap, 100);
+      }
+    }
+
+    // Inicialização do Mapa do Pacote Cairo & Gizé
+    let pacoteMapInitialized = false;
+    function initPacoteMap() {
+      if (pacoteMapInitialized) return;
+      pacoteMapInitialized = true;
+
+      const map = L.map('pacoteMap').setView([29.9792, 31.1342], 12);
+
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+      }).addTo(map);
+
+      // Pontos do Pacote
+      const pois = [
+        { name: "Pirâmides de Gizé & Esfinge", coords: [29.9792, 31.1342], type: "✦ Monumento Faraônico" },
+        { name: "Grande Museu Egípcio (GEM)", coords: [29.9947, 31.1176], type: "🏛️ Museu Exclusivo" },
+        { name: "Marriott Mena House", coords: [29.9856, 31.1328], type: "🏨 Hospedagem de Luxo" },
+        { name: "Four Seasons First Residence", coords: [30.0267, 31.2201], type: "🏨 Hospedagem no Nilo" },
+        { name: "9 Pyramids Lounge", coords: [29.9730, 31.1290], type: "🍽️ Restaurante Panorâmico" }
+      ];
+
+      pois.forEach(poi => {
+        L.marker(poi.coords).addTo(map)
+          .bindPopup(`<strong>${poi.name}</strong><br><span style="color: #CC7A00; font-size: 0.8rem;">${poi.type}</span>`);
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalhes do Pacote | VELUNTU</title>
+  <meta name="description" content="Detalhes completos do pacote de viagem exclusivo pela África.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .journey-steps-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 20px;
+      background: #1a1a1a;
+      border-bottom: 1px solid #2a2a2a;
+      overflow-x: auto;
+    }
+    .journey-step {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: #888;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+    .journey-step.done {
+      color: #aaa;
+    }
+    .journey-step.active {
+      color: #c99738;
+      font-weight: 700;
+    }
+    .journey-step-sep {
+      color: #444;
+      font-size: 12px;
+    }
+    .detail-layout {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 40px;
+      margin-top: 40px;
+    }
+    .detail-main-img {
+      width: 100%;
+      height: 420px;
+      object-fit: cover;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    }
+    .detail-spec-card {
+      background: white;
+      padding: 32px;
+      border-radius: 12px;
+      border: 1px solid #eaeaea;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    .spec-item {
+      display: flex;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .spec-item:last-child {
+      border-bottom: none;
+    }
+    .spec-icon {
+      font-size: 20px;
+      line-height: 1;
+    }
+    .spec-content strong {
+      display: block;
+      font-size: 14px;
+      color: #141414;
+      margin-bottom: 2px;
+    }
+    .spec-content span {
+      font-size: 14px;
+      color: #666;
+    }
+    .detail-cta-card {
+      margin-top: 30px;
+      background: #141414;
+      color: white;
+      padding: 30px;
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .detail-price-box h4 {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #c99738;
+      margin-bottom: 4px;
+    }
+    .detail-price-val {
+      font-size: 26px;
+      font-weight: 800;
+      color: white;
+      font-family: 'Cinzel', serif;
+    }
+    @media (max-width: 900px) {
+      .detail-layout {
+        grid-template-columns: 1fr;
+      }
+      .detail-main-img {
+        height: 280px;
+      }
+    }
+  </style>
+</head>
+<body id="packageDetailPage">
+
+  <!-- Header / Navbar -->
+  <header class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo-btn">
+        <span class="logo-text">VELUNTU</span>
+        <span class="logo-subtext">TRAVEL DESIGN &bull; ÁFRICA</span>
+      </a>
+
+      <nav class="nav-menu" id="navMenu">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="destinos.html" class="nav-link">Destinos</a>
+        <a href="africadosul.html" class="nav-link">África do Sul</a>
+        <a href="egito.html" class="nav-link">Egito</a>
+        <a href="madagascar.html" class="nav-link">Madagascar</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="#" id="backToPackagesBtn" class="btn btn-outline btn-sm">&larr; Voltar aos Pacotes</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Journey Progress Nav -->
+  <div class="journey-steps-bar">
+    <a href="planejar.html" class="journey-step done">1. Planejamento ✓</a>
+    <span class="journey-step-sep">&rarr;</span>
+    <a href="pacotes.html" id="breadPkgListLink" class="journey-step done">2. Pacotes Recomendados ✓</a>
+    <span class="journey-step-sep">&rarr;</span>
+    <span class="journey-step active">3. Detalhes do Pacote (Atual)</span>
+    <span class="journey-step-sep">&rarr;</span>
+    <span class="journey-step">4. Fale com a Veluntu</span>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero" id="detailHeroBg" style="min-height: 40vh; padding: 120px 20px 50px; background-image: linear-gradient(rgba(15,23,12,0.6), rgba(15,23,12,0.7)), url('https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1800&q=80');">
+    <div class="hero-bg-overlay"></div>
+    <div class="hero-content">
+      <span class="badge" id="detailDestBadge">ÁFRICA DO SUL</span>
+      <h1 class="hero-title" id="detailTitle">Safári Luxo no Kruger</h1>
+      <p class="hero-subtitle" id="detailHighlight">Ideal para casais e famílias que querem luxo em meio à natureza.</p>
+    </div>
+  </section>
+
+  <!-- Package Detailed Breakdown -->
+  <main class="section" style="padding-top: 30px;">
+    <div class="container">
+
+      <div class="detail-layout">
+        <!-- Left Column: Photo & Experiences -->
+        <div>
+          <img id="detailImage" class="detail-main-img" src="https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1200&q=80" alt="Foto do Pacote">
+
+          <div style="margin-top: 25px;">
+            <h3 style="font-family: 'Cinzel', serif; margin-bottom: 12px;">Experiências Inclusas</h3>
+            <div id="detailExperiences" style="display: flex; flex-wrap: wrap; gap: 8px;">
+              <!-- Tags injected via JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Specifics Card -->
+        <div>
+          <div class="detail-spec-card">
+            <h3 style="font-family: 'Cinzel', serif; font-size: 22px; margin-bottom: 20px; color: #141414;">Estrutura do Roteiro</h3>
+
+            <div class="spec-item">
+              <span class="spec-icon">⏱️</span>
+              <div class="spec-content">
+                <strong>Duração</strong>
+                <span id="detailDuration">6 dias / 5 noites</span>
+              </div>
+            </div>
+
+            <div class="spec-item">
+              <span class="spec-icon">🏨</span>
+              <div class="spec-content">
+                <strong>Hospedagem Selecionada</strong>
+                <span id="detailHotel">Lodge exclusivo com vista para a savana</span>
+              </div>
+            </div>
+
+            <div class="spec-item">
+              <span class="spec-icon">🗺️</span>
+              <div class="spec-content">
+                <strong>Passeios &amp; Safáris</strong>
+                <span id="detailTours">Safáris diários, visitas a Cape Town e Franschhoek</span>
+              </div>
+            </div>
+
+            <div class="spec-item">
+              <span class="spec-icon">🍽️</span>
+              <div class="spec-content">
+                <strong>Gastronomia</strong>
+                <span id="detailMeals">Café da manhã e jantar gourmet inclusos</span>
+              </div>
+            </div>
+
+            <div class="spec-item">
+              <span class="spec-icon">🚐</span>
+              <div class="spec-content">
+                <strong>Logística &amp; Transporte</strong>
+                <span id="detailTransport">Transfer privado 4x4 + voos internos</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom CTA Action Box -->
+          <div class="detail-cta-card">
+            <div class="detail-price-box">
+              <h4>Investimento Estimado</h4>
+              <div class="detail-price-val" id="detailPrice">A partir de R$ 8.400</div>
+              <span style="font-size: 12px; color: #aaa;">por pessoa sob medida</span>
+            </div>
+
+            <div>
+              <a href="#" id="btnBookPackage" class="btn btn-primary" style="background: #c99738; color: #141414; font-weight: 700; padding: 14px 28px; font-size: 15px;">Solicitar este Pacote &rarr;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container text-center">
+      <p>&copy; 2026 VELUNTU Travel Design. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

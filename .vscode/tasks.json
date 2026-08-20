@@ -1,0 +1,10 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Initialize Veluntu SaaS Backend",
+			"type": "shell",
+			"command": "cd d:\\Marianne\\veluntu && npm init -y && npm install express cors dotenv pg jsonwebtoken bcryptjs multer axios helmet express-validator"
+		}
+	]
+}

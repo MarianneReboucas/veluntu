@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VELUNTU SaaS - Autenticação da Agência</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/auth.css">
+  <style>
+    .back-home {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+    .back-home:hover {
+      color: var(--accent-color, #D4AF37);
+    }
+    .demo-hint {
+      margin-top: 15px;
+      padding: 10px;
+      background: #f8f9fa;
+      border: 1px dashed #d1d5db;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #555;
+      line-height: 1.4;
+    }
+    .demo-hint strong {
+      color: var(--primary-color, #141414);
+    }
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body class="auth-page">
+  <div class="auth-container">
+    <a href="/index.html" class="back-home">&larr; Voltar para a Vitrine Veluntu</a>
+
+    <div class="auth-card">
+      <div class="auth-header">
+        <h1 class="auth-logo">VELUNTU</h1>
+        <p class="auth-tagline">Plataforma SaaS para Agências de Viagem de Luxo</p>
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm" class="auth-form active">
+        <h2>Entrar no Painel da Agência</h2>
+        
+        <div class="form-group">
+          <label for="email">E-mail do Administrador</label>
+          <input type="email" id="email" name="email" required placeholder="admin@suaagencia.com" autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <label for="password">Senha de Acesso</label>
+          <input type="password" id="password" name="password" required placeholder="••••••••" autocomplete="current-password">
+        </div>
+
+        <button type="submit" id="loginBtn" class="btn btn-primary btn-full">Entrar na Plataforma</button>
+
+        <div class="demo-hint">
+          <strong>Conta Demo de Teste:</strong><br>
+          E-mail: <code>admin@veluntu.com.br</code> | Senha: <code>admin123</code>
+        </div>
+
+        <p class="auth-switch">
+          Sua agência ainda não tem conta? <a href="#" id="switchToRegister">Registre-se agora</a>
+        </p>
+      </form>
+
+      <!-- Register Form -->
+      <form id="registerForm" class="auth-form">
+        <h2>Cadastrar Nova Agência</h2>
+        
+        <div class="form-group">
+          <label for="agencyName">Nome da Agência</label>
+          <input type="text" id="agencyName" name="agency_name" required placeholder="Ex: Safari & Luxury Travel">
+        </div>
+
+        <div class="form-group">
+          <label for="agencyEmail">E-mail Corporativo da Agência</label>
+          <input type="email" id="agencyEmail" name="agency_email" required placeholder="contato@suaagencia.com">
+        </div>
+
+        <div class="form-group">
+          <label for="agencyPhone">Telefone / WhatsApp</label>
+          <input type="tel" id="agencyPhone" name="agency_phone" placeholder="+55 (11) 99999-9999">
+        </div>
+
+        <div class="form-group">
+          <label for="adminName">Nome do Responsável / Administrador</label>
+          <input type="text" id="adminName" name="admin_name" required placeholder="Seu Nome Completo">
+        </div>
+
+        <div class="form-group">
+          <label for="adminEmail">Seu E-mail de Acesso</label>
+          <input type="email" id="adminEmail" name="admin_email" required placeholder="seu.nome@suaagencia.com">
+        </div>
+
+        <div class="form-group">
+          <label for="adminPassword">Senha de Acesso (mín. 6 caracteres)</label>
+          <input type="password" id="adminPassword" name="admin_password" required minlength="6" placeholder="••••••••">
+        </div>
+
+        <button type="submit" id="registerBtn" class="btn btn-primary btn-full">Criar Conta e Agência</button>
+
+        <p class="auth-switch">
+          Já possui conta? <a href="#" id="switchToLogin">Fazer Login</a>
+        </p>
+      </form>
+
+      <!-- Feedback Messages -->
+      <div id="authMessage" class="auth-message hidden"></div>
+    </div>
+  </div>
+
+  <!-- Scripts in correct order -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

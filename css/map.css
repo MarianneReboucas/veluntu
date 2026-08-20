@@ -1,0 +1,283 @@
+/* VELUNTU - Interactive Stylized Map & Country Showcase Styles */
+
+.map-section {
+  position: relative;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-light);
+  overflow: hidden;
+}
+
+.map-section-header {
+  margin-bottom: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.map-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-xl);
+  align-items: start;
+}
+
+@media (min-width: 992px) {
+  .map-grid {
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: var(--space-2xl);
+  }
+}
+
+.map-wrapper {
+  position: relative;
+  width: 100%;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-medium);
+  border-radius: 4px;
+  padding: var(--space-lg);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.map-controls {
+  width: 100%;
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: var(--space-md);
+}
+
+.map-filter-btn {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--border-medium);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  transition: var(--transition-fast);
+}
+
+.map-filter-btn:hover,
+.map-filter-btn.active {
+  background: var(--accent-neutral);
+  color: var(--text-inverse);
+  border-color: var(--accent-neutral);
+}
+
+/* SVG Map Styling - Refinamento Cartográfico Fiel de Alta Precisão */
+.africa-svg {
+  width: 100%;
+  max-width: 520px;
+  height: auto;
+}
+
+.country-subpath {
+  fill: #EBE7DC;
+  stroke: #FAF9F6;
+  stroke-width: 0.8;
+  transition: fill 0.25s ease;
+}
+
+.country-subpath:hover {
+  fill: #DFD9CB;
+}
+
+.country-path.featured,
+.map-country-region {
+  fill: #D3CDC0;
+  stroke: #FAF9F6;
+  stroke-width: 1.2;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.country-path.featured:hover,
+.map-country-region:hover {
+  fill: #BDB6A5;
+}
+
+.country-path.featured.active,
+.map-country-region.active {
+  fill: #1E1E1E;
+  stroke: #FAF9F6;
+}
+
+
+
+.country-pin {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: var(--transition-fast);
+}
+
+.country-pin .pin-dot {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), fill 0.25s ease;
+  transform-origin: center;
+}
+
+.country-pin .pin-outer {
+  transition: opacity 0.25s ease, stroke-width 0.25s ease, transform 0.25s ease;
+  transform-origin: center;
+}
+
+.country-pin .pin-halo {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform-origin: center;
+  pointer-events: none;
+}
+
+/* Hover & Touch Highlight (Desktop hover & Mobile touch) */
+.country-pin:hover .pin-dot {
+  transform: scale(1.35);
+}
+
+.country-pin:hover .pin-outer {
+  opacity: 0.8;
+  stroke-width: 1.2px;
+}
+
+.country-pin:hover .pin-halo {
+  opacity: 0.45;
+  transform: scale(1.1);
+}
+
+.country-pin:hover text {
+  letter-spacing: 0.16em;
+  fill: #000000;
+}
+
+/* Selected Active State Indication */
+.country-pin.active .pin-dot {
+  transform: scale(1.45);
+  fill: #0A0A0A;
+}
+
+.country-pin.active .pin-outer {
+  opacity: 0.95;
+  stroke-width: 1.4px;
+}
+
+.country-pin.active .pin-halo {
+  opacity: 0.6;
+  animation: active-marker-pulse 2.2s infinite ease-in-out;
+}
+
+.country-pin.active text {
+  font-weight: 700;
+  fill: #000000;
+}
+
+@keyframes active-marker-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.35;
+  }
+  50% {
+    transform: scale(1.45);
+    opacity: 0.75;
+  }
+}
+
+.country-pin text {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  fill: var(--text-primary);
+  letter-spacing: 0.12em;
+  pointer-events: none;
+  transition: letter-spacing 0.25s ease, fill 0.25s ease;
+}
+
+
+
+/* Editorial Country Card Preview */
+.country-preview-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-medium);
+  border-radius: 4px;
+  padding: var(--space-lg);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  opacity: 1;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.country-preview-card.updating {
+  opacity: 0.5;
+  transform: translateY(8px);
+}
+
+.country-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: var(--space-xs);
+}
+
+.country-preview-title {
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+}
+
+.country-image-frame {
+  width: 100%;
+  height: 240px;
+  background-color: var(--bg-tertiary);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.country-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(90%) contrast(105%);
+  transition: filter 0.5s ease, transform 0.8s ease;
+}
+
+.country-image-frame:hover .country-image {
+  filter: grayscale(0%) contrast(100%);
+  transform: scale(1.04);
+}
+
+.country-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.country-tag-pill {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  padding: 4px 10px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  color: var(--text-secondary);
+}
+
+.country-narrative {
+  color: var(--text-secondary);
+  font-size: 0.98rem;
+  line-height: 1.65;
+}
+
+.country-quote {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  border-left: 2px solid var(--text-primary);
+  padding-left: var(--space-sm);
+  margin: var(--space-xs) 0;
+}

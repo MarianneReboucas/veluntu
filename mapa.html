@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VELUNTU — Laboratório Cartográfico &amp; Mapa Interativo</title>
+
+  <meta name="description" content="Mapa interativo da Veluntu para exploração geográfica do continente africano (África do Sul, Egito e Madagascar).">
+  <meta name="theme-color" content="#FAF9F6">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>V</text></svg>">
+
+  <!-- CSS Core & Map Modules -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/fullmap.css">
+  <link rel="stylesheet" href="css/journal.css">
+  <link rel="stylesheet" href="css/pwaNav.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+
+  <!-- Offline Status Banner -->
+  <div class="offline-banner" id="offlineBanner">
+    &bull; Você está navegando em modo offline. O acervo salvo no seu Caderno Veluntu permanece disponível.
+  </div>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="mobile-bottom-nav">
+    <a href="index.html" class="bottom-nav-item" data-route="explorar">
+      <svg class="bottom-nav-icon" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" stroke-width="1.8"/>
+        <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="currentColor"/>
+      </svg>
+      <span>Explorar</span>
+    </a>
+
+    <a href="mapa.html" class="bottom-nav-item active" data-route="mapa">
+      <svg class="bottom-nav-icon" viewBox="0 0 24 24">
+        <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+        <line x1="8" y1="2" x2="8" y2="18"/>
+        <line x1="16" y1="6" x2="16" y2="22"/>
+      </svg>
+      <span>Mapa</span>
+    </a>
+
+    <button class="bottom-nav-item" data-route="jornada" onclick="openJournalModal('journey')">
+      <svg class="bottom-nav-icon" viewBox="0 0 24 24">
+        <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/>
+        <circle cx="12" cy="10" r="3"/>
+      </svg>
+      <span>Jornada</span>
+    </button>
+
+    <button class="bottom-nav-item" data-route="colecao" onclick="openJournalModal('collection')">
+      <svg class="bottom-nav-icon" viewBox="0 0 24 24">
+        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+      </svg>
+      <span>Coleção</span>
+    </button>
+  </nav>
+
+  <button class="floating-journal-btn" onclick="openJournalModal('collection')" aria-label="Abrir Coleção PWA">
+    <span>Minha Coleção</span>
+    <span class="journal-badge-count collection-counter-badge">0</span>
+  </button>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container header-container">
+      <a href="index.html" class="brand-logo">
+        <span class="brand-title">VELUNTU</span>
+        <span class="brand-subtitle">LABORATÓRIO CARTOGRÁFICO</span>
+      </a>
+
+      <nav class="nav-desktop">
+        <a href="index.html#continente" class="nav-link">&larr; Voltar ao Continente</a>
+        <a href="index.html#descubra" class="nav-link">O que combina com você?</a>
+        <a href="egito.html" class="nav-link">Egito</a>
+        <a href="africa-do-sul.html" class="nav-link">África do Sul</a>
+        <a href="madagascar.html" class="nav-link">Madagascar</a>
+        <a href="javascript:void(0)" class="nav-link" onclick="openJournalModal('collection')">
+          Coleção &amp; Jornada (<span class="collection-counter-badge">0</span>)
+        </a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="pwa-badge">
+          <span class="pwa-dot"></span>
+          <span>PWA ATIVO</span>
+        </div>
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir Menu">
+          <span class="menu-line"></span>
+          <span class="menu-line"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Fullscreen Drawer Navigation -->
+  <nav class="mobile-nav" id="mobileNav">
+    <span class="mono-meta" style="margin-top: 10px;">NAVEGAÇÃO CARTOGRÁFICA</span>
+    <div class="mobile-nav-links">
+      <a href="index.html" class="mobile-nav-item">Voltar à Home <span>01</span></a>
+      <a href="egito.html" class="mobile-nav-item">Dossiê Egito <span>02</span></a>
+      <a href="africa-do-sul.html" class="mobile-nav-item">Dossiê África do Sul <span>03</span></a>
+      <a href="madagascar.html" class="mobile-nav-item">Dossiê Madagascar <span>04</span></a>
+      <a href="javascript:void(0)" class="mobile-nav-item" onclick="openJournalModal('collection')">Minha Coleção <span>05</span></a>
+    </div>
+  </nav>
+
+  <main>
+    <section class="map-standalone-section">
+      <div class="container">
+        <!-- Page Title Header -->
+        <div style="margin-bottom: var(--space-xl);">
+          <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
+            <span class="editorial-tag">Ferramenta de Exploração Geográfica</span>
+            <span class="mono-meta">CARTOGRAFIA CONTINENTAL DE ALTA PRECISÃO</span>
+          </div>
+          <h1>Exploração Interativa do Continente</h1>
+          <p style="font-size: 1.1rem; color: var(--text-secondary); max-width: 720px;">
+            Alterne entre a visão geral dos três territórios iniciais ou navegue pelos pontos de interesse geográficos organizados pelos eixos de História, Cultura, Aventura, Gastronomia, Natureza e Vida Selvagem.
+          </p>
+        </div>
+
+        <!-- MAIN MAP TOOL CONTAINER -->
+        <div class="map-tool-container">
+          <!-- MAP CANVAS -->
+          <div class="map-canvas-box">
+            <!-- CATEGORY / MODE TABS -->
+            <div class="map-mode-tabs">
+              <span class="mono-meta">FILTRO DE INSPEÇÃO</span>
+              <div class="map-poi-filters">
+                <button class="map-poi-btn active" data-category="all-countries">Países em Foco</button>
+                <button class="map-poi-btn" data-category="all">Todos os Pontos</button>
+                <button class="map-poi-btn" data-category="historia">História</button>
+                <button class="map-poi-btn" data-category="cultura">Cultura</button>
+                <button class="map-poi-btn" data-category="aventura">Aventura</button>
+                <button class="map-poi-btn" data-category="gastronomia">Gastronomia</button>
+                <button class="map-poi-btn" data-category="natureza">Natureza</button>
+                <button class="map-poi-btn" data-category="vida-selvagem">Vida Selvagem</button>
+              </div>
+            </div>
+
+            <!-- HIGH-PRECISION GEOGRAPHIC VECTOR MAP OF THE AFRICAN CONTINENT -->
+            <svg class="map-svg-viewport" viewBox="0 0 600 650" xmlns="http://www.w3.org/2000/svg">
+              <g class="africa-full-map-group">
+                <!-- North Africa -->
+                <path class="country-subpath" data-region="marocco" d="M 120 48 L 165 42 L 175 75 L 140 98 L 120 70 Z" />
+                <path class="country-subpath" data-region="western-sahara" d="M 95 98 L 140 98 L 125 145 L 85 130 Z" />
+                <path class="country-subpath" data-region="algeria" d="M 165 42 L 240 38 L 260 90 L 250 165 L 175 175 L 140 98 L 175 75 Z" />
+                <path class="country-subpath" data-region="tunisia" d="M 240 38 L 262 32 L 265 68 L 245 75 Z" />
+                <path class="country-subpath" data-region="libya" d="M 260 68 L 365 58 L 375 160 L 250 165 L 260 90 Z" />
+                <!-- Egito (Featured Destination) -->
+                <path class="map-country-region active" data-country="egito" d="M 365 58 C 410 52, 450 56, 462 70 C 468 82, 460 100, 455 110 L 468 108 L 472 95 L 478 105 L 465 135 L 452 160 L 375 160 Z" />
+                <path class="country-subpath" data-region="sudan" d="M 375 160 L 452 160 L 468 215 L 420 250 L 370 230 L 375 160 Z" />
+
+                <!-- West Africa -->
+                <path class="country-subpath" data-region="mauritania" d="M 85 130 L 175 145 L 175 175 L 130 215 L 68 185 Z" />
+                <path class="country-subpath" data-region="mali" d="M 130 215 L 175 175 L 250 165 L 235 220 L 165 248 Z" />
+                <path class="country-subpath" data-region="niger" d="M 250 165 L 320 162 L 315 228 L 235 220 Z" />
+                <path class="country-subpath" data-region="chad" d="M 320 162 L 375 160 L 370 230 L 340 270 L 315 228 Z" />
+                <path class="country-subpath" data-region="senegal" d="M 68 185 L 105 185 L 98 220 L 60 205 Z" />
+                <path class="country-subpath" data-region="guinea" d="M 98 220 L 135 220 L 125 248 L 90 240 Z" />
+                <path class="country-subpath" data-region="cotedivoire" d="M 135 220 L 165 220 L 160 268 L 130 260 Z" />
+                <path class="country-subpath" data-region="ghana" d="M 165 220 L 188 220 L 188 268 L 160 268 Z" />
+                <path class="country-subpath" data-region="nigeria" d="M 235 220 L 315 228 L 305 285 L 245 285 Z" />
+
+                <!-- Central Africa -->
+                <path class="country-subpath" data-region="cameroon" d="M 305 285 L 340 270 L 330 330 L 295 320 Z" />
+                <path class="country-subpath" data-region="car" d="M 340 270 L 370 230 L 415 260 L 390 310 L 330 330 Z" />
+                <path class="country-subpath" data-region="drc" d="M 330 330 L 390 310 L 435 325 L 430 405 L 350 420 L 315 375 Z" />
+
+                <!-- East Africa -->
+                <path class="country-subpath" data-region="ethiopia" d="M 420 250 L 468 215 L 505 220 L 515 265 L 458 290 Z" />
+                <path class="country-subpath" data-region="somalia" d="M 505 220 L 535 235 L 510 315 L 478 305 L 515 265 Z" />
+                <path class="country-subpath" data-region="kenya" d="M 435 325 L 458 290 L 478 305 L 468 360 L 430 350 Z" />
+                <path class="country-subpath" data-region="tanzania" d="M 430 350 L 468 360 L 458 425 L 412 415 L 430 405 Z" />
+
+                <!-- Southern Africa -->
+                <path class="country-subpath" data-region="angola" d="M 315 375 L 350 420 L 368 475 L 300 475 L 295 415 Z" />
+                <path class="country-subpath" data-region="zambia" d="M 350 420 L 412 415 L 418 465 L 368 475 Z" />
+                <path class="country-subpath" data-region="mozambique" d="M 412 415 L 458 425 L 442 530 L 405 520 L 418 465 Z" />
+                <path class="country-subpath" data-region="namibia" d="M 300 475 L 368 475 L 340 550 L 275 540 Z" />
+                <path class="country-subpath" data-region="botswana" d="M 368 475 L 418 465 L 398 545 L 340 550 Z" />
+
+                <!-- África do Sul (Featured Destination) -->
+                <path class="map-country-region" data-country="africa-do-sul" d="M 275 540 L 340 550 L 398 545 L 405 520 L 420 545 L 395 615 C 340 625, 270 610, 240 580 Z" />
+
+                <!-- Island of Madagascar (Featured Destination) -->
+                <path class="map-country-region" data-country="madagascar" d="M 495 405 C 515 385, 532 415, 528 465 C 522 515, 502 535, 488 515 C 480 475, 488 430, 495 405 Z" />
+              </g>
+
+              <!-- Dynamic Sub-Points of Interest Group (Rendered via JS) -->
+              <g id="mapPOIGroup" style="display: none;"></g>
+
+              <!-- Discrete Minimalist Interactive Country Pins & Labels -->
+              <!-- Egito Marker -->
+              <g class="country-pin active" data-country="egito" transform="translate(440, 115)">
+                <circle class="pin-halo" r="9" fill="none" stroke="#141414" stroke-width="0.7" opacity="0.3" />
+                <circle class="pin-outer" r="5.5" fill="none" stroke="#141414" stroke-width="0.8" opacity="0.5" />
+                <circle class="pin-dot" r="3" fill="#141414" />
+                <text x="12" y="3.5">EGITO</text>
+              </g>
+
+              <!-- África do Sul Marker -->
+              <g class="country-pin" data-country="africa-do-sul" transform="translate(298, 575)">
+                <circle class="pin-halo" r="9" fill="none" stroke="#141414" stroke-width="0.7" opacity="0.3" />
+                <circle class="pin-outer" r="5.5" fill="none" stroke="#141414" stroke-width="0.8" opacity="0.5" />
+                <circle class="pin-dot" r="3" fill="#141414" />
+                <text x="-96" y="3.5">ÁFRICA DO SUL</text>
+              </g>
+
+              <!-- Madagascar Marker -->
+              <g class="country-pin" data-country="madagascar" transform="translate(510, 450)">
+                <circle class="pin-halo" r="9" fill="none" stroke="#141414" stroke-width="0.7" opacity="0.3" />
+                <circle class="pin-outer" r="5.5" fill="none" stroke="#141414" stroke-width="0.8" opacity="0.5" />
+                <circle class="pin-dot" r="3" fill="#141414" />
+                <text x="12" y="3.5">MADAGASCAR</text>
+              </g>
+            </svg>
+          </div>
+
+          <!-- MAP INSPECTOR DRAWER CARD -->
+          <div class="map-inspector-card" id="mapInspectorCard">
+            <!-- Populated dynamically via interactiveMap.js -->
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MINHA COLEÇÃO & MINHA JORNADA MODAL -->
+  <div class="journal-modal" id="journalModal">
+    <div class="journal-header">
+      <div class="brand-logo">
+        <span class="brand-title" style="font-size: 1.2rem;">VELUNTU</span>
+        <span class="brand-subtitle">MINHA COLEÇÃO &amp; JORNADA</span>
+      </div>
+
+      <nav class="journal-tabs-nav">
+        <button class="journal-tab-btn active" data-view="collection">
+          <span>Minha Coleção</span>
+          <span class="journal-badge-count collection-counter-badge">0</span>
+        </button>
+        <button class="journal-tab-btn" data-view="journey">
+          <span>Minha Jornada</span>
+          <span class="journal-badge-count journey-counter-badge">0</span>
+        </button>
+      </nav>
+
+      <button class="dossier-close-btn" onclick="closeJournalModal()">
+        <span>FECHAR</span> &times;
+      </button>
+    </div>
+
+    <div class="container journal-body">
+      <div id="journalCollectionView" class="journal-view-panel" style="display: block;">
+        <div id="collectionItemsContainer"></div>
+      </div>
+      <div id="journalJourneyView" class="journal-view-panel" style="display: none;">
+        <div id="journeyItemsContainer"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border-top: none; padding-top: 0;">
+        <span>&copy; 2026 VELUNTU EXPERIÊNCIAS CULTURAIS • LABORATÓRIO CARTOGRÁFICO</span>
+        <span><a href="index.html" style="color: #AAA;">&larr; Voltar à Página Principal</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/userJournal.js"></script>
+  <script src="js/interactiveMap.js"></script>
+  <script src="js/pwaManager.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+/* VELUNTU - Mapa Interativo Cartográfico (Design Estritamente Neutro) */
+@import url('./variables.css');
+
+.map-standalone-section {
+  position: relative;
+  padding: var(--space-xl) 0;
+  background-color: var(--bg-primary);
+  min-height: calc(100vh - var(--header-height));
+  border-bottom: 1px solid var(--border-light);
+}
+
+.map-tool-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-xl);
+  align-items: start;
+}
+
+@media (min-width: 992px) {
+  .map-tool-container {
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: var(--space-2xl);
+  }
+}
+
+/* Map Canvas Box */
+.map-canvas-box {
+  position: relative;
+  width: 100%;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-medium);
+  border-radius: 4px;
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+}
+
+/* Category Filter Header bar over map */
+.map-mode-tabs {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-xs);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.map-poi-filters {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  width: 100%;
+  scrollbar-width: thin;
+}
+
+.map-poi-btn {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 6px 14px;
+  border-radius: 16px;
+  border: 1px solid var(--border-medium);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  transition: var(--transition-fast);
+  cursor: pointer;
+}
+
+.map-poi-btn:hover,
+.map-poi-btn.active {
+  background: var(--accent-neutral);
+  color: var(--text-inverse);
+  border-color: var(--accent-neutral);
+}
+
+/* SVG Elements - Cartografia Fiel */
+.map-svg-viewport {
+  width: 100%;
+  max-width: 540px;
+  height: auto;
+}
+
+.country-subpath {
+  fill: #EBE7DC;
+  stroke: #FAF9F6;
+  stroke-width: 0.8;
+  transition: fill 0.25s ease;
+}
+
+.country-subpath:hover {
+  fill: #DFD9CB;
+}
+
+.map-country-region {
+  fill: #D3CDC0;
+  stroke: #FAF9F6;
+  stroke-width: 1.2;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.map-country-region:hover {
+  fill: #BDB6A5;
+}
+
+.map-country-region.active {
+  fill: #1E1E1E;
+  stroke: #FAF9F6;
+}
+
+
+
+/* POI Pin styling */
+.poi-marker {
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.poi-marker circle.outer {
+  fill: var(--bg-card);
+  stroke: var(--text-primary);
+  stroke-width: 2;
+  transition: transform 0.3s ease, fill 0.3s ease;
+}
+
+.poi-marker circle.inner {
+  fill: var(--text-primary);
+  transition: transform 0.3s ease;
+}
+
+.poi-marker:hover circle.outer,
+.poi-marker.active circle.outer {
+  fill: var(--text-primary);
+  transform: scale(1.3);
+}
+
+.poi-marker:hover circle.inner,
+.poi-marker.active circle.inner {
+  fill: var(--bg-card);
+}
+
+.poi-marker text {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  fill: var(--text-primary);
+  letter-spacing: 0.08em;
+  pointer-events: none;
+}
+
+/* Inspector Drawer Card */
+.map-inspector-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-medium);
+  border-radius: 4px;
+  padding: var(--space-lg);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  opacity: 1;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.map-inspector-card.updating {
+  opacity: 0.4;
+  transform: translateY(6px);
+}
+
+.inspector-image-frame {
+  width: 100%;
+  height: 220px;
+  background-color: var(--bg-tertiary);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.inspector-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(85%) contrast(105%);
+  transition: filter 0.4s ease, transform 0.6s ease;
+}
+
+.inspector-image-frame:hover .inspector-image {
+  filter: grayscale(0%) contrast(100%);
+  transform: scale(1.03);
+}
+
+.inspector-exp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: var(--space-xs);
+}
+
+.inspector-exp-item {
+  background: var(--bg-secondary);
+  border-left: 2px solid var(--text-primary);
+  padding: 10px 14px;
+  border-radius: 2px;
+}

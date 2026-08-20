@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comece a Planejar | VELUNTU</title>
+  <meta name="description" content="Planeje sua viagem pela África do Sul, Egito e Madagascar em etapas personalizadas com a Veluntu Travel Design.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .journey-steps-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 20px;
+      background: #141414;
+      border-bottom: 1px solid #282828;
+      overflow-x: auto;
+    }
+    .journey-step {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: #888;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+    .journey-step.active {
+      color: #c99738;
+      font-weight: 700;
+    }
+    .journey-step-sep {
+      color: #444;
+      font-size: 12px;
+    }
+    .planner-single-container {
+      max-width: 820px;
+      margin: 0 auto;
+    }
+    .exp-choice-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 14px;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header / Navbar -->
+  <header class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo-btn" id="logoBtn">
+        <span class="logo-text">VELUNTU</span>
+        <span class="logo-subtext">TRAVEL DESIGN &bull; ÁFRICA</span>
+      </a>
+
+      <nav class="nav-menu" id="navMenu">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="africadosul.html" class="nav-link">África do Sul</a>
+        <a href="egito.html" class="nav-link">Egito</a>
+        <a href="madagascar.html" class="nav-link">Madagascar</a>
+        <a href="pacotes.html" class="nav-link">Pacotes</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="frontend/auth.html" class="btn btn-outline btn-sm">Acesso Agência</a>
+        <button class="mobile-toggle" id="mobileToggle" aria-label="Abrir Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Journey Progress Nav -->
+  <div class="journey-steps-bar">
+    <span class="journey-step active">1. Comece a Planejar (Atual)</span>
+    <span class="journey-step-sep">&rarr;</span>
+    <span class="journey-step">2. Pacotes Recomendados</span>
+    <span class="journey-step-sep">&rarr;</span>
+    <span class="journey-step">3. Detalhes do Pacote</span>
+    <span class="journey-step-sep">&rarr;</span>
+    <span class="journey-step">4. Fale com a Veluntu</span>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero planner-page-hero">
+    <div class="hero-bg-overlay"></div>
+    <div class="hero-content">
+      <span class="badge">PLANEJAMENTO PERSONALIZADO</span>
+      <h1 class="hero-title">Comece a Planejar</h1>
+      <p class="hero-subtitle">Selecione suas preferências e descubra os pacotes ideais desenhados para a sua viagem.</p>
+    </div>
+  </section>
+
+  <!-- Main Planner Wizard Section -->
+  <main class="section planner-page-section" id="planejador" style="padding-top: 40px; padding-bottom: 70px;">
+    <div class="container planner-single-container">
+      <div class="planner-wizard-card">
+        <div class="planner-progress">
+          <div class="planner-step-label">
+            <span id="plannerStepLabel">Etapa 1 de 4</span>
+          </div>
+          <div class="planner-progress-track">
+            <span class="planner-progress-bar" id="plannerProgressBar" style="width: 25%;"></span>
+          </div>
+        </div>
+
+        <!-- Step 1: Mês -->
+        <div class="planner-step-panel active" data-step="1">
+          <h3>1. Escolha a época da viagem</h3>
+          <p>Selecione o mês ideal para sua jornada no continente africano.</p>
+
+          <div class="month-grid" id="monthGrid">
+            <button type="button" class="month-card active" data-month="Janeiro">Janeiro</button>
+            <button type="button" class="month-card" data-month="Fevereiro">Fevereiro</button>
+            <button type="button" class="month-card" data-month="Março">Março</button>
+            <button type="button" class="month-card" data-month="Abril">Abril</button>
+            <button type="button" class="month-card" data-month="Maio">Maio</button>
+            <button type="button" class="month-card" data-month="Junho">Junho</button>
+            <button type="button" class="month-card" data-month="Julho">Julho</button>
+            <button type="button" class="month-card" data-month="Agosto">Agosto</button>
+            <button type="button" class="month-card" data-month="Setembro">Setembro</button>
+            <button type="button" class="month-card" data-month="Outubro">Outubro</button>
+            <button type="button" class="month-card" data-month="Novembro">Novembro</button>
+            <button type="button" class="month-card" data-month="Dezembro">Dezembro</button>
+          </div>
+        </div>
+
+        <!-- Step 2: Interesses (Incluindo Estudo) -->
+        <div class="planner-step-panel" data-step="2">
+          <h3>2. O que você deseja na viagem?</h3>
+          <p>Selecione as experiências que mais combinam com o seu estilo.</p>
+
+          <div class="interest-grid" id="interestGrid">
+            <button type="button" class="interest-chip active" data-interest="Gastronomia">Gastronomia</button>
+            <button type="button" class="interest-chip active" data-interest="Relaxar">Relaxar</button>
+            <button type="button" class="interest-chip active" data-interest="Cultura">Cultura</button>
+            <button type="button" class="interest-chip active" data-interest="História">História</button>
+            <button type="button" class="interest-chip active" data-interest="Estudo">Estudo &amp; Conhecimento</button>
+            <button type="button" class="interest-chip active" data-interest="Natureza">Natureza</button>
+            <button type="button" class="interest-chip active" data-interest="Vida selvagem">Vida selvagem</button>
+            <button type="button" class="interest-chip active" data-interest="Aventura">Aventura</button>
+            <button type="button" class="interest-chip all-options active" data-interest="Todas as opções">Todas as opções</button>
+          </div>
+        </div>
+
+        <!-- Step 3: Modo de Descoberta com Opções Ampliadas -->
+        <div class="planner-step-panel" data-step="3">
+          <h3>3. Como você deseja encontrar seu pacote?</h3>
+          <p>Escolha por destino preferido ou pelo objetivo da sua viagem.</p>
+
+          <div class="choice-grid planner-mode-grid">
+            <button type="button" class="choice-card" data-mode="destino" data-value="Escolher um destino">
+              <h4>Escolher um destino</h4>
+              <span>África do Sul, Egito ou Madagascar.</span>
+            </button>
+            <button type="button" class="choice-card active" data-mode="experiencia" data-value="Explorar experiências">
+              <h4>Explorar experiências</h4>
+              <span>Lua de mel, casamento, férias, estudo, etc.</span>
+            </button>
+          </div>
+
+          <!-- Sub-painel: Destino -->
+          <div class="planner-mode-panel" data-mode-panel="destino" style="margin-top: 20px;">
+            <div class="choice-grid">
+              <button type="button" class="choice-card active" data-destination="África do Sul">
+                <h4>África do Sul</h4>
+                <span>Safáris de luxo, vinhedos e Cape Town.</span>
+              </button>
+              <button type="button" class="choice-card" data-destination="Egito">
+                <h4>Egito</h4>
+                <span>Pirâmides, cruzeiro no Nilo e história faraônica.</span>
+              </button>
+              <button type="button" class="choice-card" data-destination="Madagascar">
+                <h4>Madagascar</h4>
+                <span>Avenida dos baobás, lêmures e praias tropicais.</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Sub-painel: Experiências (Aniversário, Casamento, Lua de Mel, Férias, etc.) -->
+          <div class="planner-mode-panel active" data-mode-panel="experiencia" style="margin-top: 20px;">
+            <div class="discovery-group">
+              <div class="exp-choice-grid">
+                <button type="button" class="choice-card active" data-experience="Lua de mel">
+                  <h4>💍 Lua de Mel</h4>
+                  <span>Romantismo, lodges exclusivos e cenários cinematográficos.</span>
+                </button>
+                <button type="button" class="choice-card" data-experience="Casamento">
+                  <h4>💒 Casamento &amp; Celebração</h4>
+                  <span>Cerimônias inesquecíveis e momentos mágicos.</span>
+                </button>
+                <button type="button" class="choice-card" data-experience="Aniversário">
+                  <h4>🎉 Aniversário &amp; Comemoração</h4>
+                  <span>Experiências marcantes na savana, Nilo ou ilhas.</span>
+                </button>
+                <button type="button" class="choice-card" data-experience="Férias &amp; Família">
+                  <h4>🌴 Férias &amp; Família</h4>
+                  <span>Conforto, segurança e atividades para todas as idades.</span>
+                </button>
+                <button type="button" class="choice-card" data-experience="Estudo &amp; Pesquisa">
+                  <h4>📚 Estudo &amp; Imersão</h4>
+                  <span>Arqueologia, história antiga, egiptologia e biodiversidade rara.</span>
+                </button>
+                <button type="button" class="choice-card" data-experience="Safári &amp; Vida Selvagem">
+                  <h4>🦁 Safári &amp; Vida Selvagem</h4>
+                  <span>Encontros privativos com os Big 5 e fotógrafos de campo.</span>
+                </button>
+                <button type="button" class="choice-card" data-experience="Praias &amp; Relaxamento">
+                  <h4>🌊 Praias &amp; Relaxamento</h4>
+                  <span>Desconexão em resorts pé na areia e águas cristalinas.</span>
+                </button>
+                <button type="button" class="choice-card" data-experience="Primeira viagem à África">
+                  <h4>🌍 Primeira Viagem à África</h4>
+                  <span>Roteiro essencial, seguro e altamente recomendado.</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Revisão Limpa (Sem Sidebar Duplicada) -->
+        <div class="planner-step-panel" data-step="4">
+          <h3>4. Revise suas preferências</h3>
+          <p>Confira suas escolhas. Ao avançar, abriremos diretamente os pacotes de viagem correspondentes ao seu perfil.</p>
+
+          <div class="planner-review-list" style="margin-top: 20px;">
+            <div class="planner-review-item">
+              <span>Mês previsto</span>
+              <strong id="reviewMonthValue">Janeiro</strong>
+            </div>
+            <div class="planner-review-item">
+              <span>Interesses</span>
+              <strong id="reviewInterestsValue">Todas as opções</strong>
+            </div>
+            <div class="planner-review-item">
+              <span>Foco da viagem</span>
+              <strong id="reviewModeValue">Explorar experiências</strong>
+            </div>
+            <div class="planner-review-item">
+              <span>Experiência / Destino selecionado</span>
+              <strong id="reviewSelectionValue">Lua de mel</strong>
+            </div>
+          </div>
+
+          <div class="planner-review-actions" style="margin-top: 30px; display: flex; gap: 14px; justify-content: flex-end;">
+            <button type="button" class="btn btn-outline" data-nav="prev">&larr; Alterar escolhas</button>
+            <button type="button" class="btn btn-primary" id="btnGoToPackages" style="padding: 14px 28px; font-size: 15px;">Ver Pacotes Recomendados &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Form Navigation Buttons (Steps 1, 2, 3) -->
+        <div class="planner-form-actions" id="plannerFormActions" style="margin-top: 25px;">
+          <button type="button" class="btn btn-outline" data-nav="prev">Voltar</button>
+          <button type="button" class="btn btn-primary" data-nav="next">Avançar</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col footer-brand">
+          <a href="index.html" class="logo-btn">
+            <span class="logo-text">VELUNTU</span>
+            <span class="logo-subtext">TRAVEL DESIGN &bull; ÁFRICA</span>
+          </a>
+          <p>Agência de viagens autoral especializada em roteiros sob medida pelo continente africano.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-title">Navegação</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="africadosul.html">África do Sul</a></li>
+            <li><a href="egito.html">Egito</a></li>
+            <li><a href="madagascar.html">Madagascar</a></li>
+            <li><a href="pacotes.html">Pacotes de Viagem</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-title">Atendimento</h4>
+          <p>Atendimento exclusivo com hora marcada</p>
+          <p>contato@veluntu.com.br</p>
+          <p>+55 11 99999-8888</p>
+        </div>
+      </div>
+
+      <div class="footer-bottom text-center">
+        <p>&copy; 2026 VELUNTU Travel Design. Todos os direitos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

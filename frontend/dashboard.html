@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VELUNTU SaaS - Painel de Controle</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body class="dashboard-page">
+  <div class="dashboard-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2 class="sidebar-logo">VELUNTU <span>SaaS</span></h2>
+        <span class="sidebar-close" id="sidebarClose">&times;</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button type="button" class="nav-item active" data-section="dashboard">
+          <span class="icon">📊</span> Visão Geral
+        </button>
+        <button type="button" class="nav-item" data-section="packages">
+          <span class="icon">📦</span> Pacotes de Viagem
+        </button>
+        <button type="button" class="nav-item" data-section="reservations">
+          <span class="icon">📅</span> Reservas & Leads
+        </button>
+        <button type="button" class="nav-item" data-section="settings">
+          <span class="icon">⚙️</span> Minha Agência
+        </button>
+
+        <div class="sidebar-divider"></div>
+
+        <a href="/index.html" class="nav-item" target="_blank" title="Abrir vitrine pública em nova aba">
+          <span class="icon">🌍</span> Ver Vitrine Pública &rarr;
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button id="logoutBtn" class="btn btn-logout">🚪 Sair do Sistema</button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Topbar Header -->
+      <header class="topbar">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Menu Lateral">☰</button>
+        
+        <div class="topbar-info">
+          <div class="user-badge">
+            <span id="userDisplay" class="user-display">Carregando...</span>
+            <span id="agencyDisplay" class="agency-display">Agência</span>
+          </div>
+          <span id="planDisplay" class="plan-badge">STARTER</span>
+        </div>
+      </header>
+
+      <!-- Content Views -->
+      <div class="content">
+
+        <!-- ================= SECTION 1: DASHBOARD OVERVIEW ================= -->
+        <section id="dashboard" class="section active">
+          <div class="section-header">
+            <div>
+              <h1>Painel de Controle</h1>
+              <p class="section-subtitle">Acompanhe as métricas e desempenho da sua agência em tempo real</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+              <button class="btn btn-primary" onclick="switchSection('packages'); document.getElementById('newPackageBtn').click();">+ Novo Pacote</button>
+            </div>
+          </div>
+
+          <!-- KPI Cards -->
+          <div class="dashboard-cards">
+            <div class="card">
+              <div class="card-top">
+                <h3>Total de Pacotes</h3>
+                <span class="card-icon">📦</span>
+              </div>
+              <p class="card-value" id="totalPackages">0</p>
+              <p class="card-footer-info">Roteiros ativos no catálogo</p>
+            </div>
+
+            <div class="card">
+              <div class="card-top">
+                <h3>Total de Reservas</h3>
+                <span class="card-icon">📅</span>
+              </div>
+              <p class="card-value" id="totalReservations">0</p>
+              <p class="card-footer-info">Solicitações registradas</p>
+            </div>
+
+            <div class="card">
+              <div class="card-top">
+                <h3>Reservas Pendentes</h3>
+                <span class="card-icon">⏳</span>
+              </div>
+              <p class="card-value" id="pendingReservations" style="color: var(--warning-color);">0</p>
+              <p class="card-footer-info">Aguardando confirmação</p>
+            </div>
+
+            <div class="card">
+              <div class="card-top">
+                <h3>Receita Total</h3>
+                <span class="card-icon">💎</span>
+              </div>
+              <p class="card-value" id="totalRevenue" style="color: var(--accent-color);">USD 0.00</p>
+              <p class="card-footer-info">Valor bruto de reservas</p>
+            </div>
+          </div>
+
+          <!-- Recent Activity -->
+          <div class="settings-card" style="margin-top: 20px;">
+            <h3>Últimas Reservas Recebidas</h3>
+            <div id="recentReservationsList" style="margin-top: 15px;">
+              <p style="color: var(--text-muted); font-size: 14px;">Carregando atividades...</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= SECTION 2: PACKAGES ================= -->
+        <section id="packages" class="section">
+          <div class="section-header">
+            <div>
+              <h1>Pacotes de Viagem</h1>
+              <p class="section-subtitle">Crie e personalize seus roteiros exclusivos pela África</p>
+            </div>
+            <button class="btn btn-primary" id="newPackageBtn">+ Criar Novo Pacote</button>
+          </div>
+
+          <!-- Search & Filter Toolbar -->
+          <div class="filter-toolbar">
+            <input type="text" id="packageSearchInput" class="filter-input" placeholder="🔍 Buscar por título ou destino...">
+            <select id="packageDestFilter" class="filter-select">
+              <option value="">Todos os Destinos</option>
+              <option value="África do Sul">África do Sul</option>
+              <option value="Egito">Egito</option>
+              <option value="Madagascar">Madagascar</option>
+            </select>
+          </div>
+
+          <!-- Packages Grid -->
+          <div id="packagesList" class="packages-grid">
+            <!-- Packages injected dynamically -->
+          </div>
+        </section>
+
+        <!-- ================= SECTION 3: RESERVATIONS ================= -->
+        <section id="reservations" class="section">
+          <div class="section-header">
+            <div>
+              <h1>Gerenciar Reservas</h1>
+              <p class="section-subtitle">Acompanhe e confirme solicitações de clientes e viajantes</p>
+            </div>
+            <button class="btn btn-primary" id="newReservationBtn">+ Nova Reserva Manual</button>
+          </div>
+
+          <!-- Filter Toolbar -->
+          <div class="filter-toolbar">
+            <input type="text" id="reservationSearchInput" class="filter-input" placeholder="🔍 Buscar por cliente ou pacote...">
+            <select id="reservationStatusFilter" class="filter-select">
+              <option value="todas">Todos os Status</option>
+              <option value="pendente">⏳ Pendentes</option>
+              <option value="confirmada">✅ Confirmadas</option>
+              <option value="cancelada">❌ Canceladas</option>
+            </select>
+          </div>
+
+          <!-- Reservations List -->
+          <div id="reservationsList" class="reservations-list">
+            <!-- Reservations injected dynamically -->
+          </div>
+        </section>
+
+        <!-- ================= SECTION 4: SETTINGS ================= -->
+        <section id="settings" class="section">
+          <div class="section-header">
+            <div>
+              <h1>Configurações da Agência</h1>
+              <p class="section-subtitle">Gerencie os dados cadastrais e o plano da sua empresa</p>
+            </div>
+          </div>
+
+          <div class="settings-grid">
+            <div class="settings-card">
+              <h3>Perfil da Agência</h3>
+              <form id="agencySettingsForm">
+                <div class="form-group">
+                  <label for="settingsAgencyName">Nome da Agência</label>
+                  <input type="text" id="settingsAgencyName" name="name" required>
+                </div>
+                <div class="form-group">
+                  <label for="settingsAgencyEmail">E-mail de Contato</label>
+                  <input type="email" id="settingsAgencyEmail" name="email" disabled style="background: #f1f5f9; cursor: not-allowed;">
+                </div>
+                <div class="form-group">
+                  <label for="settingsAgencyPhone">Telefone / WhatsApp</label>
+                  <input type="tel" id="settingsAgencyPhone" name="phone">
+                </div>
+                <div class="form-group">
+                  <label for="settingsAgencyCountry">País de Operação</label>
+                  <input type="text" id="settingsAgencyCountry" name="country">
+                </div>
+                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+              </form>
+            </div>
+
+            <div class="settings-card">
+              <h3>Plano & Conexão</h3>
+              <div class="settings-item">
+                <label>Plano Atual</label>
+                <p><span id="settingsPlanBadge" class="plan-badge">STARTER</span></p>
+              </div>
+              <div class="settings-item">
+                <label>Status do Banco de Dados</label>
+                <p style="color: var(--success-color); font-weight: 600;">⚡ Conectado ao Supabase</p>
+              </div>
+              <div class="settings-item">
+                <label>Identificador da Agência (Tenant ID)</label>
+                <p><code id="settingsAgencyId" style="font-size: 12px; background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">-</code></p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ================= MODAL: CRIAR / EDITAR PACOTE ================= -->
+  <div id="packageModal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close" id="closePackageModal">&times;</span>
+      <h2 id="packageModalTitle">Criar Novo Pacote</h2>
+      <form id="packageForm">
+        <input type="hidden" id="packageEditId" value="">
+        
+        <div class="form-group">
+          <label for="packageTitle">Título do Pacote *</label>
+          <input type="text" id="packageTitle" name="title" required placeholder="Ex: Safári Privativo no Kruger">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="packageDestination">Destino *</label>
+            <input type="text" id="packageDestination" name="destination" required placeholder="Ex: África do Sul">
+          </div>
+          <div class="form-group">
+            <label for="packagePrice">Preço (USD) *</label>
+            <input type="number" id="packagePrice" name="price" step="0.01" min="0" required placeholder="5000.00">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="packageDuration">Duração (dias)</label>
+            <input type="number" id="packageDuration" name="duration_days" min="1" value="7">
+          </div>
+          <div class="form-group">
+            <label for="packageParticipants">Máximo de Participantes</label>
+            <input type="number" id="packageParticipants" name="max_participants" min="1" value="10">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="packageImageUrl">URL da Foto de Capa</label>
+          <input type="url" id="packageImageUrl" name="image_url" placeholder="https://images.unsplash.com/...">
+        </div>
+
+        <div class="form-group">
+          <label for="packageServices">Serviços Inclusos (separados por vírgula)</label>
+          <input type="text" id="packageServices" name="included_services" placeholder="Safári 4x4, Lodge 5 Estrelas, Guia Privativo, Degustação">
+        </div>
+
+        <div class="form-group">
+          <label for="packageDescription">Descrição Completa</label>
+          <textarea id="packageDescription" name="description" rows="3" placeholder="Detalhes do itinerário e experiências exclusivas..."></textarea>
+        </div>
+
+        <button type="submit" id="savePackageBtn" class="btn btn-primary btn-full" style="width: 100%; margin-top: 10px;">Salvar Pacote</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: CRIAR RESERVA MANUAL ================= -->
+  <div id="reservationModal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close" id="closeReservationModal">&times;</span>
+      <h2>Nova Reserva</h2>
+      <form id="reservationForm">
+        <div class="form-group">
+          <label for="reservationPackage">Pacote Selecionado</label>
+          <select id="reservationPackage" name="package_id">
+            <option value="">Carregando pacotes...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="clientName">Nome do Cliente *</label>
+          <input type="text" id="clientName" name="client_name" required placeholder="Nome completo">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="clientEmail">E-mail do Cliente *</label>
+            <input type="email" id="clientEmail" name="client_email" required placeholder="cliente@email.com">
+          </div>
+          <div class="form-group">
+            <label for="clientPhone">Telefone / WhatsApp</label>
+            <input type="tel" id="clientPhone" name="client_phone" placeholder="+55 (11) 99999-9999">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="participantsCount">Número de Passageiros</label>
+            <input type="number" id="participantsCount" name="participants_count" value="2" min="1">
+          </div>
+          <div class="form-group">
+            <label for="travelDate">Data Prevista da Viagem</label>
+            <input type="date" id="travelDate" name="travel_date">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="reservationNotes">Observações do Cliente / Pedidos Especiais</label>
+          <textarea id="reservationNotes" name="notes" rows="2" placeholder="Preferências de acomodação, celebração de lua de mel, etc."></textarea>
+        </div>
+
+        <button type="submit" id="saveReservationBtn" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Criar Reserva</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
