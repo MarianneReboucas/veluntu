@@ -8,8 +8,20 @@
   ],
   "routes": [
     {
+      "src": "/css/(.*)",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/js/(.*)",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/frontend/(.*)",
+      "dest": "/server.js"
+    },
+    {
       "src": "/(.*)",
-      "dest": "server.js"
+      "dest": "/server.js"
     }
   ]
 }

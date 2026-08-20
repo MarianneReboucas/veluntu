@@ -49,11 +49,19 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Resolve project root (works in both local and Vercel serverless)
+const ROOT_DIR = path.resolve(__dirname);
+
 // Serve static frontend files and public website
-app.use('/frontend', express.static(path.join(__dirname, 'frontend')));
-app.use('/css', express.static(path.join(__dirname, 'css')));
-app.use('/js', express.static(path.join(__dirname, 'js')));
-app.use(express.static(path.join(__dirname)));
+app.use('/frontend', express.static(path.join(ROOT_DIR, 'frontend')));
+app.use('/css', express.static(path.join(ROOT_DIR, 'css')));
+app.use('/js', express.static(path.join(ROOT_DIR, 'js')));
+app.use(express.static(ROOT_DIR));
+
+// Explicit root route — serves index.html
+app.get('/', (req, res) => {
+  res.sendFile(path.join(ROOT_DIR, 'index.html'));
+});
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -74,11 +82,11 @@ app.get('/api/health', (req, res) => {
 
 // Direct friendly routes for SaaS
 app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'auth.html'));
+  res.sendFile(path.join(ROOT_DIR, 'frontend', 'auth.html'));
 });
 
 app.get('/dashboard', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'dashboard.html'));
+  res.sendFile(path.join(ROOT_DIR, 'frontend', 'dashboard.html'));
 });
 
 // Error handling middleware
