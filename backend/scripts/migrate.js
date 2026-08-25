@@ -1,10 +1,10 @@
-const pool = require('../config/database');
+const db = require('../config/database');
 
 const initDatabase = async () => {
   try {
-    console.log('🔄 Conectando e verificando schema do banco de dados Veluntu SaaS...');
+    console.log('🔄 Conectando ao Neon PostgreSQL e executando migrações do schema Veluntu...');
 
-    const client = await pool.connect();
+    const client = await db.getClient();
     
     try {
       await client.query('BEGIN');
@@ -12,7 +12,7 @@ const initDatabase = async () => {
       await client.query(`
         CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-        -- Agencies Table
+        -- Agencies Table (Multi-tenant)
         CREATE TABLE IF NOT EXISTS public.agencies (
           id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
           name VARCHAR(255) NOT NULL,
@@ -56,7 +56,7 @@ const initDatabase = async () => {
           updated_at TIMESTAMPTZ DEFAULT NOW()
         );
 
-        -- Reservations / Inquiries Table
+        -- Reservations Table
         CREATE TABLE IF NOT EXISTS public.reservations (
           id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
           package_id UUID REFERENCES public.packages(id) ON DELETE SET NULL,
@@ -73,17 +73,18 @@ const initDatabase = async () => {
           updated_at TIMESTAMPTZ DEFAULT NOW()
         );
 
-        -- Indexes
+        -- Indexes for high performance queries
         CREATE INDEX IF NOT EXISTS idx_agencies_email ON public.agencies(email);
         CREATE INDEX IF NOT EXISTS idx_users_agency_id ON public.users(agency_id);
         CREATE INDEX IF NOT EXISTS idx_users_email ON public.users(email);
         CREATE INDEX IF NOT EXISTS idx_packages_agency_id ON public.packages(agency_id);
+        CREATE INDEX IF NOT EXISTS idx_packages_status ON public.packages(status);
         CREATE INDEX IF NOT EXISTS idx_reservations_package_id ON public.reservations(package_id);
         CREATE INDEX IF NOT EXISTS idx_reservations_agency_id ON public.reservations(agency_id);
       `);
 
       await client.query('COMMIT');
-      console.log('✅ Tabelas e índices verificados/criados com sucesso!');
+      console.log('✅ Migração do Neon PostgreSQL executada com sucesso! Todas as tabelas e índices estão prontos.');
     } catch (queryErr) {
       await client.query('ROLLBACK');
       throw queryErr;
@@ -91,18 +92,17 @@ const initDatabase = async () => {
       client.release();
     }
   } catch (err) {
-    console.error('❌ Erro na migração do banco de dados:', err.message);
+    console.error('❌ Erro na migração do Neon Postgres:', err.message);
     process.exit(1);
   } finally {
-    await pool.end();
+    if (db.pool) {
+      await db.pool.end();
+    }
   }
 };
 
 if (require.main === module) {
-  initDatabase().then(() => {
-    console.log('🎉 Migração concluída com sucesso!');
-    process.exit(0);
-  });
+  initDatabase();
 }
 
 module.exports = initDatabase;

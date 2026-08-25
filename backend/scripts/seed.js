@@ -1,140 +1,133 @@
-const bcrypt = require('bcryptjs');
-const { v4: uuidv4 } = require('uuid');
 const db = require('../config/database');
-const supabase = db.supabase;
+const bcrypt = require('bcryptjs');
 
-const seedData = async () => {
+const seed = async () => {
+  let client;
   try {
-    console.log('🌱 Populando dados de demonstração no Veluntu SaaS via Supabase...');
+    console.log('🌱 Populando dados iniciais no Neon PostgreSQL para Veluntu SaaS...');
 
-    // 1. Check/Insert demo agency
-    const { data: existingAgencies } = await supabase
-      .from('agencies')
-      .select('id')
-      .eq('email', 'contato@veluntu.com.br');
+    client = await db.getClient();
+    await client.query('BEGIN');
 
-    let agencyId;
-    if (!existingAgencies || existingAgencies.length === 0) {
-      agencyId = uuidv4();
-      const { error: agencyErr } = await supabase.from('agencies').insert({
-        id: agencyId,
-        name: 'Veluntu Travel Design',
-        email: 'contato@veluntu.com.br',
-        phone: '+55 (11) 99999-8888',
-        country: 'Brasil',
-        status: 'active',
-        subscription_plan: 'enterprise',
-      });
-      if (agencyErr) throw new Error(agencyErr.message);
-      console.log('✅ Agência demo criada.');
-    } else {
-      agencyId = existingAgencies[0].id;
-      console.log('ℹ️ Agência demo já existe.');
+    // 1. Criar Agência Modelo
+    const agencyRes = await client.query(
+      `INSERT INTO agencies (name, email, phone, country, subscription_plan, status)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name
+       RETURNING id`,
+      [
+        'Veluntu Luxury Travel Expeditions',
+        'contato@veluntu.com',
+        '+55 11 99999-8888',
+        'Brasil',
+        'enterprise',
+        'active',
+      ]
+    );
+    const agencyId = agencyRes.rows[0].id;
+
+    // 2. Criar Usuário Admin Padrão
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash('admin123', salt);
+
+    await client.query(
+      `INSERT INTO users (agency_id, name, email, password, role)
+       VALUES ($1, $2, $3, $4, $5)
+       ON CONFLICT (email) DO UPDATE SET password = EXCLUDED.password`,
+      [agencyId, 'Marianne Admin', 'admin@veluntu.com', hashedPassword, 'admin']
+    );
+
+    // 3. Criar Pacotes Turísticos Exclusivos
+    const packages = [
+      {
+        title: 'Safári Privativo no Serengeti & Cratera de Ngorongoro',
+        description: 'Uma expedição inesquecível pelo coração da savana africana com hospedagem em lodges de ultra luxo, safáris guiados privativos e voo panorâmico de balão.',
+        destination: 'Tanzânia',
+        price: 5400.00,
+        currency: 'USD',
+        duration_days: 8,
+        included_services: JSON.stringify(['Hospedagem 5 Estrelas', 'Guia Especialista em Português', 'Voo de Balão ao Amanhecer', 'Todas as Refeições Gourmet', 'Transfers em Avião Privativo']),
+        max_participants: 6,
+        image_url: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1200&q=80',
+      },
+      {
+        title: 'Egito Milenar: Pirâmides VIP & Cruzeiro no Nilo em Dahabiya',
+        description: 'Descubra os mistérios do Antigo Egito com acesso exclusivo fora do horário público às Pirâmides de Gizé, seguido de um cruzeiro relaxante em veleiro tradicional privativo no Nilo.',
+        destination: 'Egito',
+        price: 4200.00,
+        currency: 'USD',
+        duration_days: 10,
+        included_services: JSON.stringify(['Egiptólogo PhD Privativo', 'Acesso VIP sem Filas', 'Cruzeiro Exclusivo Dahabiya', 'Jantar com vista para o Nilo']),
+        max_participants: 8,
+        image_url: 'https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?auto=format&fit=crop&w=1200&q=80',
+      },
+      {
+        title: 'África do Sul Suprema: Cape Town & Vinhedos com Safári no Kruger',
+        description: 'A combinação perfeita entre a cosmopolita Cidade do Cabo, degustações privadas em Stellenbosch e uma imersão na reserva privada de Sabi Sands.',
+        destination: 'África do Sul',
+        price: 4950.00,
+        currency: 'USD',
+        duration_days: 9,
+        included_services: JSON.stringify(['Lodge Relais & Châteaux', 'Helicóptero sobre a Table Mountain', 'Degustação Sommelier VIP', 'Safári Noturno com Rangers']),
+        max_participants: 10,
+        image_url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80',
+      },
+      {
+        title: 'Expedição Selvagem em Madagascar: Baobás & Ilhas Paradisíacas',
+        description: 'Explore as florestas de pedra do Tsingy, a lendária Avenida dos Baobás e relaxe nas praias de águas cristalinas de Nosy Be.',
+        destination: 'Madagascar',
+        price: 4600.00,
+        currency: 'USD',
+        duration_days: 11,
+        included_services: JSON.stringify(['Voo Fretado', 'Eco-Lodge de Charme', 'Mergulho com Tartarugas', 'Guia Naturalista Privado']),
+        max_participants: 6,
+        image_url: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=1200&q=80',
+      },
+    ];
+
+    for (const pkg of packages) {
+      await client.query(
+        `INSERT INTO packages (agency_id, title, description, destination, price, currency, duration_days, included_services, max_participants, image_url, status)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, $9, $10, 'active')`,
+        [
+          agencyId,
+          pkg.title,
+          pkg.description,
+          pkg.destination,
+          pkg.price,
+          pkg.currency,
+          pkg.duration_days,
+          pkg.included_services,
+          pkg.max_participants,
+          pkg.image_url,
+        ]
+      );
     }
 
-    // 2. Check/Insert demo admin user
-    const { data: existingUsers } = await supabase
-      .from('users')
-      .select('id')
-      .eq('email', 'admin@veluntu.com.br');
+    // 4. Criar Reservas de Demonstração
+    await client.query(
+      `INSERT INTO reservations (agency_id, client_name, client_email, client_phone, participants_count, travel_date, status, notes, total_price)
+       VALUES 
+       ($1, 'Carlos Eduardo Mendes', 'carlos.mendes@exemplo.com', '+55 11 98888-7777', 2, '2026-10-15', 'confirmada', 'Viagem de lua de mel. Solicitaram champanhe de boas-vindas.', 10800.00),
+       ($1, 'Beatriz Alcantara', 'beatriz.a@exemplo.com', '+55 21 97777-6666', 4, '2026-11-05', 'pendente', 'Família com 2 adolescentes. Preferem quartos conectados.', 16800.00),
+       ($1, 'Rodrigo Silveira', 'rodrigo.s@exemplo.com', '+55 31 96666-5555', 2, '2026-09-20', 'pendente', 'Interesse no roteiro do Egito com extensão no Cairo.', 8400.00)`,
+      [agencyId]
+    );
 
-    if (!existingUsers || existingUsers.length === 0) {
-      const hashedPassword = await bcrypt.hash('admin123', 10);
-      const { error: userErr } = await supabase.from('users').insert({
-        id: uuidv4(),
-        agency_id: agencyId,
-        name: 'Marianne Admin',
-        email: 'admin@veluntu.com.br',
-        password: hashedPassword,
-        role: 'admin',
-      });
-      if (userErr) throw new Error(userErr.message);
-      console.log('✅ Usuário admin criado: admin@veluntu.com.br / admin123');
-    } else {
-      console.log('ℹ️ Usuário admin demo já existe.');
-    }
-
-    // 3. Check/Insert demo packages
-    const { data: existingPkgs } = await supabase
-      .from('packages')
-      .select('id')
-      .eq('agency_id', agencyId);
-
-    if (!existingPkgs || existingPkgs.length === 0) {
-      const demoPackages = [
-        {
-          id: uuidv4(),
-          agency_id: agencyId,
-          title: 'Expedição África do Sul & Kruger Privativo',
-          description: 'Lodges exclusivos na savana, degustações em Franschhoek e a rota cênica de Cape Town com guias privativos.',
-          destination: 'África do Sul (Kruger & Cape Town)',
-          price: 5800.00,
-          currency: 'USD',
-          duration_days: 10,
-          included_services: ['Safári 4x4 Privativo', 'Lodge 5 Estrelas', 'Degustação de Vinhos', 'Voos Internos', 'Guia Especialista'],
-          max_participants: 8,
-          image_url: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1200&q=80',
-        },
-        {
-          id: uuidv4(),
-          agency_id: agencyId,
-          title: 'Jornada pelo Nilo & Mistérios do Egito Antigo',
-          description: 'Navegação em Dahabiya de luxo pelo Rio Nilo, acesso privativo às Pirâmides de Gizé e Templos de Luxor e Aswan.',
-          destination: 'Egito (Cairo, Luxor & Aswan)',
-          price: 4600.00,
-          currency: 'USD',
-          duration_days: 8,
-          included_services: ['Cruzeiro Fluvial Boutique', 'Egiptólogo Exclusivo', 'Entradas VIP nos Monumentos', 'Hotéis Históricos'],
-          max_participants: 12,
-          image_url: 'https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?auto=format&fit=crop&w=1200&q=80',
-        },
-        {
-          id: uuidv4(),
-          agency_id: agencyId,
-          title: 'Paraíso Secreto de Madagascar & Ilhas Tropicais',
-          description: 'Avenida dos Baobás, florestas com lêmures e refúgio exclusivo nas águas cristalinas do arquipélago de Nosy Be.',
-          destination: 'Madagascar (Morondava & Nosy Be)',
-          price: 5200.00,
-          currency: 'USD',
-          duration_days: 9,
-          included_services: ['Resort Pé na Areia', 'Safári Noturno de Lêmures', 'Transfer em Barco Rápido', 'Pensão Completa'],
-          max_participants: 6,
-          image_url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80',
-        },
-      ];
-
-      const { error: pkgErr } = await supabase.from('packages').insert(demoPackages);
-      if (pkgErr) throw new Error(pkgErr.message);
-      console.log('✅ Pacotes de demonstração inseridos.');
-
-      // Insert sample reservation
-      const { error: resErr } = await supabase.from('reservations').insert({
-        id: uuidv4(),
-        package_id: demoPackages[0].id,
-        agency_id: agencyId,
-        client_name: 'Carlos Eduardo Mendes',
-        client_email: 'carlos.mendes@email.com',
-        client_phone: '+55 11 98765-4321',
-        participants_count: 2,
-        travel_date: '2026-10-15',
-        status: 'confirmada',
-        total_price: 11600.00,
-        notes: 'Lua de mel. Preferência por suíte com vista para a savana.',
-      });
-      if (resErr) throw new Error(resErr.message);
-      console.log('✅ Reserva de demonstração inserida.');
-    } else {
-      console.log('ℹ️ Pacotes demo já existem.');
-    }
-
-    console.log('🎉 Seed finalizado com sucesso!');
+    await client.query('COMMIT');
+    console.log('✅ Base de dados Neon populada com sucesso!');
+    console.log('🔑 Credenciais de Admin: admin@veluntu.com / admin123');
   } catch (err) {
-    console.error('❌ Erro no seed:', err.message);
+    if (client) await client.query('ROLLBACK');
+    console.error('❌ Erro ao popular banco Neon:', err.message);
+  } finally {
+    if (client) client.release();
+    if (db.pool) await db.pool.end();
   }
 };
 
 if (require.main === module) {
-  seedData().then(() => process.exit(0));
+  seed();
 }
 
-module.exports = seedData;
+module.exports = seed;

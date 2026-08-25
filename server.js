@@ -92,15 +92,17 @@ app.get('/dashboard', (req, res) => {
 // Error handling middleware
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`\n=================================================`);
-  console.log(`🚀 Veluntu SaaS rodando em http://localhost:${PORT}`);
-  console.log(`✨ Painel SaaS:   http://localhost:${PORT}/frontend/dashboard.html`);
-  console.log(`🔐 Login SaaS:    http://localhost:${PORT}/frontend/auth.html`);
-  console.log(`🌍 Vitrine Web:   http://localhost:${PORT}/index.html`);
-  console.log(`📊 API Base URL:  http://localhost:${PORT}/api`);
-  console.log(`=================================================\n`);
-});
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`\n=================================================`);
+    console.log(`🚀 Veluntu SaaS rodando em http://localhost:${PORT}`);
+    console.log(`✨ Painel SaaS:   http://localhost:${PORT}/frontend/dashboard.html`);
+    console.log(`🔐 Login SaaS:    http://localhost:${PORT}/frontend/auth.html`);
+    console.log(`🌍 Vitrine Web:   http://localhost:${PORT}/index.html`);
+    console.log(`📊 API Base URL:  http://localhost:${PORT}/api`);
+    console.log(`=================================================\n`);
+  });
+}
 
 module.exports = app;

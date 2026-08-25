@@ -1,5 +1,4 @@
-const { v4: uuidv4 } = require('uuid');
-const pool = require('../config/database');
+const db = require('../config/database');
 
 // Get all reservations for current agency
 const getReservations = async (req, res) => {
@@ -31,7 +30,7 @@ const getReservations = async (req, res) => {
 
     query += ' ORDER BY r.created_at DESC';
 
-    const result = await pool.query(query, params);
+    const result = await db.query(query, params);
     res.json({
       success: true,
       count: result.rows.length,
@@ -43,7 +42,7 @@ const getReservations = async (req, res) => {
   }
 };
 
-// Create new reservation
+// Create new reservation (Agency admin side)
 const createReservation = async (req, res) => {
   try {
     const agencyId = req.agencyId;
@@ -62,49 +61,36 @@ const createReservation = async (req, res) => {
     if (!client_name || !client_email) {
       return res.status(400).json({
         success: false,
-        error: 'Nome do cliente e e-mail são obrigatórios.',
+        error: 'Nome e e-mail do cliente são obrigatórios.',
       });
     }
 
     let calculatedPrice = parseFloat(total_price) || 0;
 
-    // If package_id is provided, verify it belongs to agency and calculate price if needed
-    if (package_id) {
-      const packageCheck = await pool.query(
-        'SELECT id, price FROM packages WHERE id = $1 AND agency_id = $2',
-        [package_id, agencyId]
-      );
-
-      if (packageCheck.rows.length === 0) {
-        return res.status(404).json({ success: false, error: 'Pacote selecionado não encontrado.' });
-      }
-
-      if (!total_price) {
-        const count = parseInt(participants_count, 10) || 1;
-        calculatedPrice = parseFloat(packageCheck.rows[0].price) * count;
+    if (package_id && !total_price) {
+      const pkg = await db.query('SELECT price FROM packages WHERE id = $1', [package_id]);
+      if (pkg.rows.length > 0) {
+        calculatedPrice = (parseFloat(pkg.rows[0].price) || 0) * (parseInt(participants_count) || 1);
       }
     }
 
-    const reservationId = uuidv4();
-    const result = await pool.query(
+    const result = await db.query(
       `INSERT INTO reservations (
-        id, package_id, agency_id, client_name, client_email,
-        client_phone, participants_count, travel_date, status, total_price, notes, created_at, updated_at
-      )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW(), NOW())
+        agency_id, package_id, client_name, client_email, client_phone,
+        participants_count, travel_date, status, notes, total_price
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
       RETURNING *`,
       [
-        reservationId,
-        package_id || null,
         agencyId,
+        package_id || null,
         client_name.trim(),
         client_email.toLowerCase().trim(),
         client_phone || null,
-        parseInt(participants_count, 10) || 1,
+        parseInt(participants_count) || 1,
         travel_date || null,
-        (status || 'pendente').toLowerCase(),
+        status || 'pendente',
+        notes || '',
         calculatedPrice,
-        notes || null,
       ]
     );
 
@@ -124,36 +110,50 @@ const updateReservation = async (req, res) => {
   try {
     const agencyId = req.agencyId;
     const { reservationId } = req.params;
-    const { status, travel_date, participants_count, notes, total_price } = req.body;
+    const {
+      status,
+      notes,
+      travel_date,
+      participants_count,
+      total_price,
+      client_name,
+      client_email,
+      client_phone,
+    } = req.body;
 
-    // Check ownership
-    const check = await pool.query(
+    const check = await db.query(
       `SELECT r.id FROM reservations r
        LEFT JOIN packages p ON r.package_id = p.id
-       WHERE r.id = $1 AND (p.agency_id = $2 OR r.agency_id = $2)`,
+       WHERE r.id = $1 AND (r.agency_id = $2 OR p.agency_id = $2)`,
       [reservationId, agencyId]
     );
 
     if (check.rows.length === 0) {
-      return res.status(404).json({ success: false, error: 'Reserva não encontrada ou acesso negado.' });
+      return res.status(404).json({ success: false, error: 'Reserva não encontrada.' });
     }
 
-    const result = await pool.query(
-      `UPDATE reservations
-       SET status = COALESCE($1, status),
-           travel_date = COALESCE($2, travel_date),
-           participants_count = COALESCE($3, participants_count),
-           notes = COALESCE($4, notes),
-           total_price = COALESCE($5, total_price),
-           updated_at = NOW()
-       WHERE id = $6
-       RETURNING *`,
+    const result = await db.query(
+      `UPDATE reservations SET
+        status = COALESCE($1, status),
+        notes = COALESCE($2, notes),
+        travel_date = COALESCE($3, travel_date),
+        participants_count = COALESCE($4, participants_count),
+        total_price = COALESCE($5, total_price),
+        client_name = COALESCE($6, client_name),
+        client_email = COALESCE($7, client_email),
+        client_phone = COALESCE($8, client_phone),
+        updated_at = NOW()
+      WHERE id = $9
+      RETURNING *`,
       [
         status ? status.toLowerCase() : null,
-        travel_date,
-        participants_count !== undefined ? parseInt(participants_count, 10) : null,
-        notes,
+        notes !== undefined ? notes : null,
+        travel_date || null,
+        participants_count !== undefined ? parseInt(participants_count) : null,
         total_price !== undefined ? parseFloat(total_price) : null,
+        client_name ? client_name.trim() : null,
+        client_email ? client_email.toLowerCase().trim() : null,
+        client_phone || null,
         reservationId,
       ]
     );
@@ -175,18 +175,16 @@ const deleteReservation = async (req, res) => {
     const agencyId = req.agencyId;
     const { reservationId } = req.params;
 
-    const check = await pool.query(
-      `SELECT r.id FROM reservations r
-       LEFT JOIN packages p ON r.package_id = p.id
-       WHERE r.id = $1 AND (p.agency_id = $2 OR r.agency_id = $2)`,
+    const result = await db.query(
+      `DELETE FROM reservations
+       WHERE id = $1 AND agency_id = $2
+       RETURNING id`,
       [reservationId, agencyId]
     );
 
-    if (check.rows.length === 0) {
-      return res.status(404).json({ success: false, error: 'Reserva não encontrada ou acesso negado.' });
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, error: 'Reserva não encontrada.' });
     }
-
-    await pool.query('DELETE FROM reservations WHERE id = $1', [reservationId]);
 
     res.json({
       success: true,
@@ -194,7 +192,7 @@ const deleteReservation = async (req, res) => {
     });
   } catch (err) {
     console.error('Error deleting reservation:', err);
-    res.status(500).json({ success: false, error: 'Erro ao deletar reserva: ' + err.message });
+    res.status(500).json({ success: false, error: 'Erro ao excluir reserva: ' + err.message });
   }
 };
 

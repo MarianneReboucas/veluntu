@@ -1,5 +1,4 @@
-const { v4: uuidv4 } = require('uuid');
-const pool = require('../config/database');
+const db = require('../config/database');
 
 // Get all packages for current agency
 const getPackages = async (req, res) => {
@@ -22,7 +21,7 @@ const getPackages = async (req, res) => {
 
     query += ' ORDER BY created_at DESC';
 
-    const result = await pool.query(query, params);
+    const result = await db.query(query, params);
     res.json({
       success: true,
       count: result.rows.length,
@@ -40,7 +39,7 @@ const getPackageById = async (req, res) => {
     const agencyId = req.agencyId;
     const { packageId } = req.params;
 
-    const result = await pool.query(
+    const result = await db.query(
       'SELECT * FROM packages WHERE id = $1 AND agency_id = $2',
       [packageId, agencyId]
     );
@@ -70,48 +69,40 @@ const createPackage = async (req, res) => {
       included_services,
       max_participants,
       image_url,
+      status,
     } = req.body;
 
-    if (!title || !destination || price === undefined || price === null) {
+    if (!title || !destination || !price) {
       return res.status(400).json({
         success: false,
-        error: 'Título, destino e preço são obrigatórios.',
+        error: 'Título, destino e preço são campos obrigatórios.',
       });
     }
 
-    let servicesJson = '[]';
-    if (Array.isArray(included_services)) {
-      servicesJson = JSON.stringify(included_services);
-    } else if (typeof included_services === 'string') {
-      try {
-        servicesJson = JSON.stringify(
-          included_services.split(',').map((s) => s.trim()).filter(Boolean)
-        );
-      } catch (e) {
-        servicesJson = JSON.stringify([included_services]);
-      }
-    }
+    const servicesJson = Array.isArray(included_services)
+      ? JSON.stringify(included_services)
+      : typeof included_services === 'string'
+      ? JSON.stringify(included_services.split(',').map((s) => s.trim()))
+      : '[]';
 
-    const packageId = uuidv4();
-    const result = await pool.query(
+    const result = await db.query(
       `INSERT INTO packages (
-        id, agency_id, title, description, destination, price,
-        currency, duration_days, included_services, max_participants, image_url, created_at, updated_at
-      )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW(), NOW())
+        agency_id, title, description, destination, price, currency,
+        duration_days, included_services, max_participants, image_url, status
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, $9, $10, $11)
       RETURNING *`,
       [
-        packageId,
         agencyId,
         title.trim(),
         description || '',
         destination.trim(),
         parseFloat(price) || 0,
         currency || 'USD',
-        parseInt(duration_days, 10) || 1,
+        parseInt(duration_days) || 1,
         servicesJson,
-        parseInt(max_participants, 10) || 10,
+        parseInt(max_participants) || 10,
         image_url || 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1200&q=80',
+        status || 'active',
       ]
     );
 
@@ -141,53 +132,51 @@ const updatePackage = async (req, res) => {
       included_services,
       max_participants,
       image_url,
+      status,
     } = req.body;
 
-    // Check ownership
-    const check = await pool.query(
+    // Check existence
+    const check = await db.query(
       'SELECT id FROM packages WHERE id = $1 AND agency_id = $2',
       [packageId, agencyId]
     );
 
     if (check.rows.length === 0) {
-      return res.status(404).json({ success: false, error: 'Pacote não encontrado ou acesso negado.' });
+      return res.status(404).json({ success: false, error: 'Pacote não encontrado.' });
     }
 
-    let servicesJson = undefined;
-    if (included_services !== undefined) {
-      if (Array.isArray(included_services)) {
-        servicesJson = JSON.stringify(included_services);
-      } else if (typeof included_services === 'string') {
-        servicesJson = JSON.stringify(
-          included_services.split(',').map((s) => s.trim()).filter(Boolean)
-        );
-      }
-    }
+    const servicesJson = Array.isArray(included_services)
+      ? JSON.stringify(included_services)
+      : typeof included_services === 'string'
+      ? JSON.stringify(included_services.split(',').map((s) => s.trim()))
+      : '[]';
 
-    const result = await pool.query(
-      `UPDATE packages
-       SET title = COALESCE($1, title),
-           description = COALESCE($2, description),
-           destination = COALESCE($3, destination),
-           price = COALESCE($4, price),
-           currency = COALESCE($5, currency),
-           duration_days = COALESCE($6, duration_days),
-           included_services = COALESCE($7, included_services),
-           max_participants = COALESCE($8, max_participants),
-           image_url = COALESCE($9, image_url),
-           updated_at = NOW()
-       WHERE id = $10 AND agency_id = $11
-       RETURNING *`,
+    const result = await db.query(
+      `UPDATE packages SET
+        title = COALESCE($1, title),
+        description = COALESCE($2, description),
+        destination = COALESCE($3, destination),
+        price = COALESCE($4, price),
+        currency = COALESCE($5, currency),
+        duration_days = COALESCE($6, duration_days),
+        included_services = COALESCE($7::jsonb, included_services),
+        max_participants = COALESCE($8, max_participants),
+        image_url = COALESCE($9, image_url),
+        status = COALESCE($10, status),
+        updated_at = NOW()
+      WHERE id = $11 AND agency_id = $12
+      RETURNING *`,
       [
-        title,
-        description,
-        destination,
+        title ? title.trim() : null,
+        description !== undefined ? description : null,
+        destination ? destination.trim() : null,
         price !== undefined ? parseFloat(price) : null,
-        currency,
-        duration_days !== undefined ? parseInt(duration_days, 10) : null,
-        servicesJson,
-        max_participants !== undefined ? parseInt(max_participants, 10) : null,
-        image_url,
+        currency || null,
+        duration_days !== undefined ? parseInt(duration_days) : null,
+        included_services ? servicesJson : null,
+        max_participants !== undefined ? parseInt(max_participants) : null,
+        image_url || null,
+        status || null,
         packageId,
         agencyId,
       ]
@@ -210,22 +199,22 @@ const deletePackage = async (req, res) => {
     const agencyId = req.agencyId;
     const { packageId } = req.params;
 
-    const result = await pool.query(
-      'DELETE FROM packages WHERE id = $1 AND agency_id = $2 RETURNING id, title',
+    const result = await db.query(
+      'DELETE FROM packages WHERE id = $1 AND agency_id = $2 RETURNING id',
       [packageId, agencyId]
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ success: false, error: 'Pacote não encontrado ou acesso negado.' });
+      return res.status(404).json({ success: false, error: 'Pacote não encontrado.' });
     }
 
     res.json({
       success: true,
-      message: `Pacote "${result.rows[0].title}" excluído com sucesso!`,
+      message: 'Pacote excluído com sucesso!',
     });
   } catch (err) {
     console.error('Error deleting package:', err);
-    res.status(500).json({ success: false, error: 'Erro ao deletar pacote: ' + err.message });
+    res.status(500).json({ success: false, error: 'Erro ao excluir pacote: ' + err.message });
   }
 };
 
