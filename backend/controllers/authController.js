@@ -263,8 +263,42 @@ const getMe = async (req, res) => {
   }
 };
 
+// Update agency details
+const updateAgency = async (req, res) => {
+  try {
+    const agencyId = req.agencyId;
+    const { name, phone, logo_url, country } = req.body;
+
+    const result = await db.query(
+      `UPDATE agencies
+       SET name = COALESCE($1, name),
+           phone = COALESCE($2, phone),
+           logo_url = COALESCE($3, logo_url),
+           country = COALESCE($4, country),
+           updated_at = NOW()
+       WHERE id = $5
+       RETURNING id, name, email, phone, logo_url, country, subscription_plan, status, updated_at`,
+      [name || null, phone || null, logo_url || null, country || null, agencyId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, error: 'Agência não encontrada.' });
+    }
+
+    res.json({
+      success: true,
+      message: 'Dados da agência atualizados com sucesso!',
+      data: result.rows[0],
+    });
+  } catch (err) {
+    console.error('Error in updateAgency:', err);
+    res.status(500).json({ success: false, error: 'Erro ao atualizar agência: ' + err.message });
+  }
+};
+
 module.exports = {
   registerAgency,
   login,
   getMe,
+  updateAgency,
 };

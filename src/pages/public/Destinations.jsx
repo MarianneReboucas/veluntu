@@ -1,116 +1,119 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, ArrowRight, Sparkles, Compass } from 'lucide-react';
 
 export default function Destinations() {
   const destinations = [
     {
-      id: 'egito',
-      title: 'Egito Milenar',
-      tagline: 'O Berço dos Faraós & O Nilo',
-      image: 'https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?auto=format&fit=crop&w=1200&q=80',
-      description: 'Uma imersão privada de Cairo a Luxor e Aswan. Navegação exclusiva em veleiros tradicionais Dahabiya, acesso privativo aos templos de Abu Simbel e voo de balão sobre Tebas.',
-      highlights: ['Pirâmides de Gizé com Acesso VIP', 'Cruzeiro Privativo Dahabiya', 'Egiptólogo PhD Dedicado', 'Túmulo de Tutancâmon'],
-    },
-    {
-      id: 'tanzania',
-      title: 'Tanzânia & Serengeti',
-      tagline: 'O Espetáculo Selvagem da Terra',
-      image: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1200&q=80',
-      description: 'Testemunhe a Grande Migração dos gnus e zebras no Serengeti e explore a colossal Cratera de Ngorongoro. Finalize com dias de descanso absoluto nas praias de Zanzibar.',
-      highlights: ['Lodges Singita & Four Seasons', 'Safári Aéreo em Balão ao Nascer do Sol', 'Encontro com Tribos Maasai Tradicionais', 'Resorts Privados em Zanzibar'],
-    },
-    {
-      id: 'africa-do-sul',
+      id: 'africadosul',
       title: 'África do Sul',
-      tagline: 'Cosmopolitismo, Vinhos & Big Five',
-      image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80',
-      description: 'A fascinante Cidade do Cabo, hotéis boutique de luxo, as vinícolas centenárias de Franschhoek e a adrenalina dos safáris no Kruger e nas reservas de Sabi Sands.',
-      highlights: ['Degustações Privadas com Sommeliers', 'Safári Noturno nos Melhores Lodges', 'Helicóptero sobre a Table Mountain', 'Gastronomia Premiada Michelin'],
+      badge: 'Safári & Vinhedos',
+      image: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1200&q=80',
+      description: 'Encontros com a vida selvagem no Kruger, degustações em adegas históricas e a beleza cosmopolita de Cape Town.',
+      highlights: [
+        'Lodges Privativos na Savana',
+        'Rota dos Vinhos em Franschhoek',
+        'Praias e Montanha da Mesa'
+      ],
+      filter: 'África do Sul'
+    },
+    {
+      id: 'egito',
+      title: 'Egito',
+      badge: 'História & Navegação',
+      image: 'https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?auto=format&fit=crop&w=1200&q=80',
+      description: 'Cruzeiros privativos pelo Rio Nilo, pirâmides milenares e acesso exclusivo a templos acompanhado de egiptólogos.',
+      highlights: [
+        'Navegação Dahabiya no Nilo',
+        'Templos de Luxor e Aswan',
+        'Mar Vermelho e Oásis'
+      ],
+      filter: 'Egito'
     },
     {
       id: 'madagascar',
       title: 'Madagascar',
-      tagline: 'Santuário de Biodiversidade',
+      badge: 'Natureza Rara',
       image: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=1200&q=80',
-      description: 'Uma ilha incomparável no planeta. Caminhe pela mágica Avenida dos Baobás, observe lêmures em seu habitat preservado e relaxe em ilhas secretas com águas cristalinas.',
-      highlights: ['Avenida dos Baobás ao Pôr do Sol', 'Mergulho com Tartarugas em Nosy Be', 'Expedição Tsingy de Bemaraha', 'Eco-Lodges de Ultra Charme'],
+      description: 'A magia da Alameda dos Baobás, santuários de lêmures e praias intocadas de águas cristalinas em Nosy Be.',
+      highlights: [
+        'Alameda dos Baobás Milenares',
+        'Expedições na Vida Selvagem',
+        'Resort Privativo em Nosy Be'
+      ],
+      filter: 'Madagascar'
     },
   ];
 
   return (
-    <div className="min-h-screen bg-[#080c16] text-white py-16">
-      <div className="container-custom">
-        
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-[#d4af37] text-xs uppercase tracking-widest font-bold">Catálogo de Territórios</span>
-          <h1 className="font-serif text-3xl sm:text-5xl font-bold text-white mt-2 mb-4">
-            Destinos Extraordinários na África
-          </h1>
-          <p className="text-slate-400 text-sm">
-            Conheça as regiões mais emblemáticas do continente africano trabalhadas com o padrão inegociável da Veluntu.
-          </p>
+    <div>
+      {/* Journey Progress Nav */}
+      <div className="journey-steps-bar">
+        <Link to="/planejar" className="journey-step done">1. Comece a Planejar ✓</Link>
+        <span className="journey-step-sep">&rarr;</span>
+        <span className="journey-step active">2. Destinos (Atual)</span>
+        <span className="journey-step-sep">&rarr;</span>
+        <span className="journey-step">3. Pacotes de Viagem</span>
+        <span className="journey-step-sep">&rarr;</span>
+        <span className="journey-step">4. Detalhes do Pacote</span>
+        <span className="journey-step-sep">&rarr;</span>
+        <span className="journey-step">5. Fale com a Veluntu</span>
+      </div>
+
+      {/* Hero Section */}
+      <section 
+        className="hero" 
+        style={{
+          backgroundImage: `linear-gradient(rgba(15,23,12,0.55), rgba(15,23,12,0.7)), url('https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?auto=format&fit=crop&w=1800&q=80')`,
+          minHeight: '420px',
+          height: '50vh'
+        }}
+      >
+        <div className="hero-bg-overlay"></div>
+        <div className="hero-content">
+          <span className="badge">CURADORIA DE DESTINOS</span>
+          <h1 className="hero-title" style={{ fontSize: '3.4rem' }}>Escolha Seu Destino Africano</h1>
+          <p className="hero-subtitle">Selecione o cenário da sua próxima jornada para descobrir os roteiros disponíveis.</p>
         </div>
+      </section>
 
-        <div className="space-y-12">
-          {destinations.map((dest, idx) => (
-            <div
-              key={dest.id}
-              className={`p-6 sm:p-8 rounded-3xl bg-[#0e1424] border border-[#d4af37]/20 flex flex-col lg:flex-row items-center gap-8 ${
-                idx % 2 === 1 ? 'lg:flex-row-reverse' : ''
-              }`}
-            >
-              <div className="w-full lg:w-1/2 h-72 sm:h-96 rounded-2xl overflow-hidden relative group">
-                <img
-                  src={dest.image}
-                  alt={dest.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-4 left-4 bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-bold text-[#f3e5ab] border border-white/10 flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-[#d4af37]" />
-                  <span>{dest.title}</span>
-                </div>
-              </div>
+      {/* Grid de Destinos */}
+      <section className="section destinos-section" id="destinos">
+        <div className="container">
+          
+          <div className="preferences-bar">
+            <p><strong>Dica da Curadoria:</strong> Você pode combinar múltiplos países em um único roteiro privativo.</p>
+            <Link to="/planejar" className="btn btn-outline btn-sm">Refazer Planejador &rarr;</Link>
+          </div>
 
-              <div className="w-full lg:w-1/2 space-y-4">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#d4af37]">
-                  {dest.tagline}
-                </span>
-                <h2 className="font-serif text-2xl sm:text-3xl font-bold text-white">
-                  {dest.title}
-                </h2>
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                  {dest.description}
-                </p>
-
-                <div className="space-y-2 pt-2">
-                  <h4 className="text-xs font-bold text-white uppercase tracking-wider">Destaques Exclusivos:</h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div className="destinos-grid">
+            {destinations.map((dest) => (
+              <article key={dest.id} className="destino-card">
+                <Link to={`/pacotes?destination=${encodeURIComponent(dest.filter)}`} className="destino-img-wrapper" style={{ display: 'block' }}>
+                  <img src={dest.image} alt={dest.title} loading="lazy" />
+                  <span className="destino-badge">{dest.badge}</span>
+                </Link>
+                <div className="destino-body">
+                  <h3 className="destino-title">
+                    <Link to={`/pacotes?destination=${encodeURIComponent(dest.filter)}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                      {dest.title}
+                    </Link>
+                  </h3>
+                  <p className="destino-text">{dest.description}</p>
+                  <div className="destino-highlights">
                     {dest.highlights.map((h, i) => (
-                      <div key={i} className="flex items-center gap-2 text-xs text-slate-300">
-                        <Sparkles className="w-3.5 h-3.5 text-[#d4af37] shrink-0" />
-                        <span>{h}</span>
-                      </div>
+                      <span key={i}><i className="icon">✦</i> {h}</span>
                     ))}
                   </div>
-                </div>
-
-                <div className="pt-4 flex items-center gap-4">
-                  <Link
-                    to={`/pacotes?destination=${encodeURIComponent(dest.title.split(' ')[0])}`}
-                    className="btn-gold px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-2"
-                  >
-                    <span>Ver Roteiros Disponíveis</span>
-                    <ArrowRight className="w-4 h-4" />
+                  <Link to={`/pacotes?destination=${encodeURIComponent(dest.filter)}`} className="btn btn-primary btn-sm" style={{ width: '100%', textAlign: 'center' }}>
+                    Ver Pacotes de {dest.title} &rarr;
                   </Link>
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
+              </article>
+            ))}
+          </div>
 
-      </div>
+        </div>
+      </section>
     </div>
   );
 }

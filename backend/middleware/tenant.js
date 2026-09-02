@@ -2,7 +2,7 @@ const pool = require('../config/database');
 
 const tenantMiddleware = async (req, res, next) => {
   try {
-    const agencyId = req.user?.agency_id || req.headers['x-agency-id'];
+
 
     if (!agencyId) {
       return res.status(403).json({

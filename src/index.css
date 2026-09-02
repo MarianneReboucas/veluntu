@@ -732,37 +732,104 @@ img {
   font-size: 0.9rem;
 }
 
-.month-grid,
-.interest-grid {
+.month-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 14px;
-  margin-top: 12px;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+  margin-top: 20px;
 }
 
-.month-card,
-.interest-chip {
-  border: 1px solid var(--border-light);
-  background: var(--bg-card-secondary);
-  border-radius: 999px;
-  padding: 14px 16px;
-  font-family: var(--font-body);
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-dark);
+@media (max-width: 900px) {
+  .month-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .month-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.month-card-luxury {
+  position: relative;
+  background: #FFFFFF;
+  border: 1px solid var(--border-light, rgba(23, 50, 11, 0.12));
+  border-radius: 8px;
+  padding: 32px 14px;
+  text-align: center;
   cursor: pointer;
-  transition: var(--transition-smooth);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 15px rgba(23, 50, 11, 0.03);
 }
 
-.month-card:hover,
-.interest-chip:hover,
-.month-card.active,
-.interest-chip.active {
-  background: var(--color-green);
-  color: #FFFFFF;
-  border-color: var(--color-green);
-  transform: translateY(-2px);
-  box-shadow: 0 12px 22px rgba(23, 50, 11, 0.15);
+.month-card-luxury .month-bg-number {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.75);
+  font-family: var(--font-heading, 'Cinzel', serif);
+  font-size: 76px;
+  font-weight: 800;
+  color: var(--color-orange, #CC7A00);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  line-height: 1;
+  z-index: 1;
+}
+
+.month-card-luxury .month-name {
+  position: relative;
+  z-index: 2;
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dark, #121814);
+  transition: all 0.3s ease;
+}
+
+/* Hover State - Revela o número sutilmente em dourado/laranja */
+.month-card-luxury:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-orange, #CC7A00);
+  box-shadow: 0 14px 28px rgba(204, 122, 0, 0.15);
+  background: #FFFDF9;
+}
+
+.month-card-luxury:hover .month-bg-number {
+  opacity: 0.38;
+  transform: translate(-50%, -50%) scale(1.05);
+}
+
+.month-card-luxury:hover .month-name {
+  color: var(--color-green, #17320B);
+  letter-spacing: 2.5px;
+}
+
+/* Active / Selected State - Destaque nobre com gradiente sutil e número visível */
+.month-card-luxury.active {
+  background: linear-gradient(135deg, rgba(204, 122, 0, 0.12) 0%, rgba(23, 50, 11, 0.06) 100%);
+  border-color: var(--color-orange, #CC7A00);
+  box-shadow: 0 12px 26px rgba(204, 122, 0, 0.2);
+  transform: translateY(-3px);
+}
+
+.month-card-luxury.active .month-bg-number {
+  opacity: 0.55;
+  transform: translate(-50%, -50%) scale(1.15);
+  color: var(--color-orange, #CC7A00);
+}
+
+.month-card-luxury.active .month-name {
+  color: var(--color-green, #17320B);
+  font-weight: 800;
 }
 
 .interest-chip.all-options.active {
@@ -2567,30 +2634,1136 @@ img {
   box-shadow: 0 10px 40px rgba(0,0,0,0.06);
 }
 
-.confirmation-box {
+/* ==========================================================================
+   PLANEJADOR DE VIAGEM VELUNTU - NOVO FLUXO EM 5 ETAPAS
+   ========================================================================== */
+
+/* Top Journey Steps Bar */
+.journey-steps-bar {
+  background: #0d160b;
+  border-bottom: 1px solid rgba(204, 122, 0, 0.2);
+  padding: 14px 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.journey-step {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #8b998a;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+
+.journey-step.active {
+  color: #e5a93c;
+  font-weight: 700;
+}
+
+.journey-step.done {
+  color: #ffffff;
+}
+
+.journey-step-sep {
+  color: rgba(204, 122, 0, 0.4);
+  font-size: 12px;
+}
+
+/* Planner Hero */
+.planner-page-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  padding: 40px 20px;
-  background: #fdfaf3;
-  border: 1px solid #fae8c8;
-  border-radius: 12px;
-  margin-top: 20px;
+  background-size: cover;
+  background-position: center;
+  color: #ffffff;
+  padding: 60px 20px;
 }
 
-.confirmation-box h3 {
-  font-family: 'Cinzel', serif;
-  font-size: 24px;
-  color: #141414;
-  margin-bottom: 10px;
+.planner-page-hero .hero-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(13, 22, 11, 0.75) 0%, rgba(13, 22, 11, 0.9) 100%);
 }
 
-@media (max-width: 900px) {
-  .detail-layout {
+.planner-page-hero .hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 820px;
+}
+
+/* Main Layout Grid */
+.planner-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 32px;
+  align-items: start;
+  margin-top: 10px;
+}
+
+@media (max-width: 1024px) {
+  .planner-layout {
     grid-template-columns: 1fr;
   }
-  .detail-main-img {
-    height: 280px;
+}
+
+/* Wizard Card Principal */
+.planner-wizard-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 40px;
+  border: 1px solid rgba(23, 50, 11, 0.08);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.04);
+}
+
+@media (max-width: 640px) {
+  .planner-wizard-card {
+    padding: 24px 18px;
   }
 }
+
+/* Progress Bar */
+.planner-progress {
+  margin-bottom: 34px;
+}
+
+.planner-step-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #17320b;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.planner-step-label span:first-child {
+  color: #cc7a00;
+}
+
+.planner-progress-track {
+  width: 100%;
+  height: 6px;
+  background: #e9ece8;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.planner-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #17320b 0%, #cc7a00 100%);
+  border-radius: 10px;
+  transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Section Header inside step */
+.planner-step-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.planner-step-header h3 {
+  font-family: var(--font-heading, 'Cinzel', serif);
+  font-size: 2rem;
+  color: #17320b;
+  margin-bottom: 8px;
+}
+
+.planner-step-header p {
+  color: #5c665d;
+  font-size: 14px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ==========================================================================
+   ETAPA 1: MESES COM NÚMERO GRANDE CENTRAL NO HOVER (IDÊNTICO À FOTO 1)
+   ========================================================================== */
+.month-grid-luxury {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+@media (max-width: 1024px) {
+  .month-grid-luxury {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .month-grid-luxury {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+/* ==========================================================================
+   ETAPA 1: MESES CLAROS COM NÚMERO NA ANIMAÇÃO DE HOVER (SEM FUNDO PRETO)
+   ========================================================================== */
+.month-grid-luxury {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+@media (max-width: 1024px) {
+  .month-grid-luxury {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .month-grid-luxury {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+.month-card-luxury {
+  position: relative;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+}
+
+.month-name {
+  font-family: var(--font-heading, 'Cinzel', serif);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #17320b;
+  position: relative;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+/* Número grande que surge como animação suave no hover e ativo */
+.month-number-big {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4.8rem;
+  font-weight: 900;
+  font-family: var(--font-heading, 'Cinzel', serif);
+  color: rgba(204, 122, 0, 0.28);
+  opacity: 0;
+  transform: scale(0.6);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Hover e Selecionado Claro & Sofisticado */
+.month-card-luxury:hover {
+  background: linear-gradient(135deg, #fff9f2 0%, #ffeedd 100%);
+  border-color: #cc7a00;
+  box-shadow: 0 8px 24px rgba(204, 122, 0, 0.16);
+  transform: translateY(-3px);
+}
+
+.month-card-luxury:hover .month-name {
+  color: #cc7a00;
+  font-weight: 800;
+}
+
+.month-card-luxury:hover .month-number-big {
+  opacity: 0.85;
+  color: rgba(204, 122, 0, 0.32);
+  transform: scale(1);
+}
+
+/* Active / Selecionado */
+.month-card-luxury.active {
+  background: #17320b;
+  border-color: #cc7a00;
+  box-shadow: 0 8px 24px rgba(23, 50, 11, 0.25);
+  transform: translateY(-2px);
+}
+
+.month-card-luxury.active .month-name {
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.month-card-luxury.active .month-number-big {
+  opacity: 0.25;
+  color: #e5a93c;
+  transform: scale(1);
+}
+
+/* ==========================================================================
+   ETAPA 2: OBJETIVOS CLAROS COM MENSAGEM QUE SÓ APARECE NO HOVER
+   ========================================================================== */
+.purpose-grid-luxury {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  margin-bottom: 30px;
+}
+
+@media (max-width: 768px) {
+  .purpose-grid-luxury {
+    grid-template-columns: 1fr;
+  }
+}
+
+.purpose-card-luxury {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 24px 26px;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+}
+
+.purpose-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.purpose-title {
+  font-family: var(--font-heading, 'Cinzel', serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #17320b;
+  margin: 0;
+  transition: all 0.3s ease;
+}
+
+.purpose-badge-tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: #cc7a00;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+/* Mensagem explicativa que surge suavemente apenas no hover / ativo */
+.purpose-hover-text {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(8px);
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #4b5563;
+  font-size: 13.5px;
+  line-height: 1.6;
+  margin-top: 0;
+  border-top: 1px solid transparent;
+  padding-top: 0;
+}
+
+/* Hover State */
+.purpose-card-luxury:hover {
+  background: #fffcf8;
+  border-color: #cc7a00;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(204, 122, 0, 0.12);
+}
+
+.purpose-card-luxury:hover .purpose-title {
+  color: #cc7a00;
+}
+
+.purpose-card-luxury:hover .purpose-hover-text {
+  max-height: 160px;
+  opacity: 1;
+  transform: translateY(0);
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top-color: #f1e9dd;
+  color: #4b5563;
+}
+
+/* Active State */
+.purpose-card-luxury.active {
+  background: #17320b;
+  border-color: #cc7a00;
+  box-shadow: 0 10px 30px rgba(23, 50, 11, 0.25);
+  transform: translateY(-2px);
+}
+
+.purpose-card-luxury.active .purpose-title {
+  color: #ffffff;
+}
+
+.purpose-card-luxury.active .purpose-badge-tag {
+  color: #e5a93c;
+}
+
+.purpose-card-luxury.active .purpose-hover-text {
+  max-height: 160px;
+  opacity: 1;
+  transform: translateY(0);
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top-color: rgba(255, 255, 255, 0.15);
+  color: #e2e8f0;
+}
+
+/* ==========================================================================
+   ETAPA 3: DESTINO VS DESCOBRIR (ABAS E CARDS)
+   ========================================================================== */
+.inspire-nav-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  background: #f0f4ee;
+  padding: 6px;
+  border-radius: 12px;
+  margin-bottom: 26px;
+}
+
+.inspire-tab-btn {
+  padding: 14px 20px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #5c665d;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.inspire-tab-btn.active {
+  background: #ffffff;
+  color: #17320b;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.inspire-tab-btn:hover:not(.active) {
+  color: #17320b;
+}
+
+/* Grid de Destino Direto */
+.destination-showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 30px;
+}
+
+@media (max-width: 768px) {
+  .destination-showcase-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.destination-card-lux {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  height: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 20px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.destination-card-lux img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1;
+}
+
+.destination-card-lux .dest-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(13,22,11,0.92) 85%);
+  z-index: 2;
+  transition: background 0.3s ease;
+}
+
+.destination-card-lux .dest-content {
+  position: relative;
+  z-index: 3;
+  color: #ffffff;
+}
+
+.destination-card-lux h4 {
+  font-family: var(--font-heading, 'Cinzel', serif);
+  font-size: 1.4rem;
+  color: #ffffff;
+  margin: 0 0 6px;
+}
+
+.destination-card-lux p {
+  font-size: 12.5px;
+  color: #e2e8f0;
+  line-height: 1.4;
+  margin: 0 0 10px;
+}
+
+.destination-card-lux .dest-badge {
+  display: inline-block;
+  background: rgba(204, 122, 0, 0.9);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+}
+
+.destination-card-lux:hover {
+  transform: translateY(-5px);
+  border-color: #cc7a00;
+  box-shadow: 0 14px 30px rgba(204, 122, 0, 0.25);
+}
+
+.destination-card-lux:hover img {
+  transform: scale(1.08);
+}
+
+.destination-card-lux.active {
+  border-color: #e5a93c;
+  box-shadow: 0 0 0 3px rgba(229, 169, 60, 0.4), 0 12px 30px rgba(0, 0, 0, 0.3);
+}
+
+.destination-card-lux.active .dest-badge {
+  background: #17320b;
+  border: 1px solid #e5a93c;
+  color: #e5a93c;
+}
+
+/* Grid de Ideias / Descobrir por Ocasião */
+.occasion-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+@media (max-width: 640px) {
+  .occasion-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.occasion-card-luxury {
+  background: #ffffff;
+  border: 1.5px solid #e7ebe5;
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.35s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.occasion-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.occasion-header h4 {
+  font-family: var(--font-heading, 'Cinzel', serif);
+  font-size: 1.15rem;
+  color: #17320b;
+  margin: 0;
+}
+
+.occasion-card-luxury p {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.occasion-badge {
+  background: #f0f4ee;
+  color: #17320b;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.occasion-card-luxury:hover {
+  border-color: #cc7a00;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(204, 122, 0, 0.1);
+}
+
+.occasion-card-luxury.active {
+  background: #17320b;
+  border-color: #cc7a00;
+  color: #ffffff;
+}
+
+.occasion-card-luxury.active .occasion-header h4 {
+  color: #ffffff;
+}
+
+.occasion-card-luxury.active p {
+  color: #e2e8f0;
+}
+
+.occasion-card-luxury.active .occasion-badge {
+  background: #cc7a00;
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   ETAPA 4: PACOTES COM DESTAQUE PARA 2 PESSOAS
+   ========================================================================== */
+.travelers-toggle-bar {
+  display: flex;
+  gap: 8px;
+  background: #f0f4ee;
+  padding: 4px;
+  border-radius: 8px;
+}
+
+.travelers-toggle-btn {
+  padding: 8px 16px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #5c665d;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.travelers-toggle-btn.active {
+  background: #17320b;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(23, 50, 11, 0.2);
+}
+
+.planner-pkg-card {
+  background: #ffffff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+  transition: all 0.35s ease;
+  margin-bottom: 20px;
+}
+
+.planner-pkg-card:hover {
+  border-color: #cc7a00;
+  box-shadow: 0 12px 32px rgba(204, 122, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.planner-pkg-card.selected-pkg {
+  border-color: #17320b;
+  box-shadow: 0 0 0 2px #cc7a00, 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.travelers-pricing-box {
+  background: #fcfaf6;
+  border: 1.5px solid #f3e7d3;
+  border-radius: 10px;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.travelers-price-label {
+  font-size: 11px;
+  color: #cc7a00;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  display: block;
+}
+
+.travelers-price-amount {
+  font-family: var(--font-heading, 'Cinzel', serif);
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #17320b;
+  line-height: 1.2;
+}
+
+.travelers-price-subtext {
+  font-size: 12px;
+  color: #718096;
+}
+
+/* ==========================================================================
+   ETAPA 5: CONFIRMAÇÃO & FORMULÁRIO COM ALTO CONTRASTE
+   ========================================================================== */
+.planner-confirm-box {
+  background: #ffffff;
+  border-radius: 12px;
+}
+
+.planner-recap-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  background: #f8faf7;
+  border: 1px solid #e1e7de;
+  border-radius: 10px;
+  padding: 18px;
+  margin-bottom: 26px;
+}
+
+@media (max-width: 768px) {
+  .planner-recap-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.planner-recap-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.planner-recap-item span {
+  font-size: 11px;
+  color: #718274;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+}
+
+.planner-recap-item strong {
+  font-size: 14px;
+  color: #17320b;
+}
+
+/* Form Inputs Rigorously High Contrast & Clean */
+.planner-form-group {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.planner-form-group label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #17320b;
+  letter-spacing: 0.3px;
+}
+
+.planner-input,
+.planner-select,
+.planner-textarea {
+  width: 100%;
+  background-color: #ffffff !important;
+  color: #121814 !important;
+  font-size: 15px !important;
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  padding: 14px 16px !important;
+  border: 1.5px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  outline: none;
+  transition: all 0.25s ease;
+  box-sizing: border-box;
+}
+
+.planner-input::placeholder,
+.planner-textarea::placeholder {
+  color: #94a3b8 !important;
+  opacity: 1;
+}
+
+.planner-input:focus,
+.planner-select:focus,
+.planner-textarea:focus {
+  border-color: #cc7a00 !important;
+  box-shadow: 0 0 0 3.5px rgba(204, 122, 0, 0.15) !important;
+  background-color: #ffffff !important;
+  color: #121814 !important;
+}
+
+.planner-form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #eef2eb;
+}
+
+/* Sidebar Resumo */
+.planner-summary {
+  background: #ffffff;
+  border: 1px solid rgba(23, 50, 11, 0.08);
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.03);
+  position: sticky;
+  top: 90px;
+}
+
+.summary-header {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #cc7a00;
+  display: block;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.summary-card h4 {
+  font-family: var(--font-heading, 'Cinzel', serif);
+  font-size: 1.4rem;
+  color: #17320b;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f0f4ee;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 13px;
+  border-bottom: 1px solid #f9faf8;
+}
+
+.summary-row span {
+  color: #718096;
+}
+
+.summary-row strong {
+  color: #17320b;
+  text-align: right;
+  max-width: 60%;
+}
+
+/* ==========================================================================
+   RESPONSIVIDADE MOBILE COMPLETA (ATÉ 992px E ATÉ 640px)
+   ========================================================================== */
+@media (max-width: 992px) {
+  :root {
+    --header-height: 70px;
+  }
+
+  .nav-container {
+    padding: 0 18px;
+  }
+
+  .desktop-only-cta {
+    display: none !important;
+  }
+
+  .mobile-toggle {
+    display: flex !important;
+    position: relative;
+    z-index: 1001;
+    width: 38px;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: rgba(23, 50, 11, 0.06);
+  }
+
+  .mobile-toggle.open span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+
+  .mobile-toggle.open span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .mobile-toggle.open span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+
+  .nav-menu {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 70px);
+    background: #FAF8F5;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 32px 24px;
+    gap: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transform: translateX(-100%);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow-y: auto;
+  }
+
+  .nav-menu.active {
+    transform: translateX(0);
+  }
+
+  .nav-link {
+    font-size: 1.15rem;
+    font-weight: 700;
+    width: 100%;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(23, 50, 11, 0.08);
+  }
+
+  .mobile-menu-cta {
+    display: block !important;
+  }
+
+  /* Grid e Colunas */
+  .sac-top-cards-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 14px !important;
+  }
+
+  .sac-main-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .detail-layout {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+
+  .exp-categories-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .diferenciais-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .sobre-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .logo-text {
+    font-size: 1.4rem;
+    letter-spacing: 3px;
+  }
+
+  .logo-subtext {
+    font-size: 0.5rem;
+    letter-spacing: 1.5px;
+  }
+
+  .hero-title {
+    font-size: 2.2rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .hero-subtitle {
+    font-size: 0.95rem !important;
+  }
+
+  .hero-cta-group {
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .hero-cta-group .btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .journey-steps-bar {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 12px 14px;
+    justify-content: flex-start;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .journey-step {
+    font-size: 11px;
+  }
+
+  .journey-step-sep {
+    margin: 0 4px;
+  }
+
+  /* Cards e Grids no Mobile */
+  .sac-top-cards-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .sac-info-box,
+  .sac-form-card {
+    padding: 22px 16px !important;
+  }
+
+  .packages-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .packages-filter-tabs {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .packages-filter-tab {
+    font-size: 12px;
+    padding: 8px 14px;
+  }
+
+  .packages-full-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .pkg-full-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .pkg-full-footer .btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Planejador Mobile */
+  .planner-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .planner-wizard-card {
+    padding: 20px 14px !important;
+  }
+
+  .planner-step-header h3 {
+    font-size: 1.4rem !important;
+  }
+
+  .month-grid-luxury {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .month-card-luxury {
+    height: 80px !important;
+  }
+
+  .month-name {
+    font-size: 0.82rem !important;
+    letter-spacing: 1px !important;
+  }
+
+  .month-number-big {
+    font-size: 3.8rem !important;
+  }
+
+  .purpose-grid-luxury {
+    grid-template-columns: 1fr !important;
+  }
+
+  .purpose-card-luxury {
+    padding: 18px 16px !important;
+  }
+
+  .destination-showcase-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .inspire-nav-tabs {
+    grid-template-columns: 1fr !important;
+  }
+
+  .planner-pkg-card > div {
+    grid-template-columns: 1fr !important;
+  }
+
+  .planner-pkg-card img {
+    height: 180px !important;
+  }
+
+  .planner-pkg-card div[style*="padding: 22px 22px 22px 0"] {
+    padding: 16px !important;
+  }
+
+  .travelers-pricing-box {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .travelers-pricing-box .btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .planner-form-actions {
+    flex-direction: column-reverse;
+    gap: 12px;
+  }
+
+  .planner-form-actions .btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+
+
+
 
 
 

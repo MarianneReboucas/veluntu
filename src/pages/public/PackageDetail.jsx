@@ -1,303 +1,217 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { 
-  MapPin, Calendar, Users, DollarSign, Check, ArrowRight, ShieldCheck, 
-  Send, Sparkles, AlertCircle 
-} from 'lucide-react';
-import { api } from '../../services/api';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
+import { getPackageById, getAllPackages } from '../../data/packagesStore';
 
 export default function PackageDetail() {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const initialTravelers = parseInt(searchParams.get('travelers')) || 2;
+  const [travelers, setTravelers] = useState(initialTravelers);
   const [pkg, setPkg] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-
-  // Booking Form State
-  const [form, setForm] = useState({
-    client_name: '',
-    client_email: '',
-    client_phone: '',
-    participants_count: 2,
-    travel_date: '',
-    notes: '',
-  });
-  const [submitting, setSubmitting] = useState(false);
-  const [successMsg, setSuccessMsg] = useState('');
 
   useEffect(() => {
-    const fetchPackage = async () => {
-      try {
-        const res = await api.getPublicPackages();
-        if (res.success && res.data) {
-          const found = res.data.find((p) => p.id === id);
-          if (found) {
-            setPkg(found);
-          } else {
-            setError('Roteiro não encontrado.');
-          }
-        }
-      } catch (err) {
-        setError('Erro ao carregar detalhes do pacote.');
-      } finally {
-        setLoading(false);
-      }
+    const updatePkg = () => {
+      const found = getPackageById(id) || getAllPackages().find((p) => p.id === id) || getAllPackages()[0];
+      setPkg(found);
+      setLoading(false);
     };
 
-    fetchPackage();
+    updatePkg();
+    window.addEventListener('veluntu_packages_updated', updatePkg);
+    return () => window.removeEventListener('veluntu_packages_updated', updatePkg);
   }, [id]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setError('');
-    setSuccessMsg('');
-
-    try {
-      const res = await api.createPublicReservation({
-        ...form,
-        package_id: id,
-      });
-
-      if (res.success) {
-        setSuccessMsg(res.message || 'Sua solicitação foi enviada com sucesso!');
-        setForm({
-          client_name: '',
-          client_email: '',
-          client_phone: '',
-          participants_count: 2,
-          travel_date: '',
-          notes: '',
-        });
-      }
-    } catch (err) {
-      setError(err.message || 'Erro ao enviar sua solicitação. Tente novamente.');
-    } finally {
-      setSubmitting(false);
-    }
-  };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#080c16] flex items-center justify-center text-[#d4af37]">
-        <div className="w-10 h-10 border-2 border-[#d4af37] border-t-transparent rounded-full animate-spin"></div>
+      <div style={{ textAlign: 'center', padding: '120px 0', background: 'var(--bg-main)' }}>
+        <p style={{ fontFamily: 'var(--font-heading)', fontSize: '1.2rem', color: '#17320B' }}>Carregando detalhes do roteiro...</p>
       </div>
     );
   }
 
-  if (error || !pkg) {
+  if (!pkg) {
     return (
-      <div className="min-h-screen bg-[#080c16] text-white flex items-center justify-center p-6">
-        <div className="text-center max-w-md p-8 bg-[#0e1424] border border-white/10 rounded-2xl">
-          <AlertCircle className="w-12 h-12 text-rose-400 mx-auto mb-4" />
-          <h2 className="font-serif text-2xl font-bold mb-2">{error || 'Pacote não encontrado'}</h2>
-          <p className="text-xs text-slate-400 mb-6">O roteiro selecionado pode ter sido desativado ou o link está incorreto.</p>
-          <Link to="/pacotes" className="btn-gold px-6 py-2.5 rounded-full text-xs font-bold uppercase">
-            Ver Todos os Roteiros
-          </Link>
-        </div>
+      <div style={{ textAlign: 'center', padding: '120px 20px', background: 'var(--bg-main)' }}>
+        <h2 style={{ fontFamily: 'var(--font-heading)', color: '#17320B', marginBottom: '16px' }}>Pacote não encontrado</h2>
+        <Link to="/pacotes" className="btn btn-primary btn-sm">Ver Todos os Pacotes</Link>
       </div>
     );
   }
 
-  const services = Array.isArray(pkg.included_services)
-    ? pkg.included_services
-    : typeof pkg.included_services === 'string'
-    ? JSON.parse(pkg.included_services || '[]')
-    : [];
+  const individualPrice = pkg.price || pkg.pricePerPerson || 24000;
+  const totalPairPrice = pkg.priceForTwo || individualPrice * 2;
+  const calculatedPrice = travelers === 2 ? totalPairPrice : individualPrice * travelers;
+  const services = Array.isArray(pkg.included_services) ? pkg.included_services : [];
 
   return (
-    <div className="min-h-screen bg-[#080c16] text-white pb-20">
-      
-      {/* Banner Top */}
-      <div className="relative h-[55vh] min-h-[400px]">
-        <img
-          src={pkg.image_url}
-          alt={pkg.title}
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#080c16] via-[#080c16]/60 to-transparent" />
-
-        <div className="container-custom absolute bottom-10 left-0 right-0">
-          <div className="flex items-center gap-3 mb-3">
-            <span className="px-3.5 py-1 rounded-full bg-[#d4af37] text-black text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5" />
-              {pkg.destination}
-            </span>
-            <span className="px-3.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-medium text-slate-200 flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5 text-[#d4af37]" />
-              {pkg.duration_days} Dias de Viagem
-            </span>
-          </div>
-
-          <h1 className="font-serif text-3xl sm:text-5xl font-bold text-white max-w-3xl leading-tight">
-            {pkg.title}
-          </h1>
-        </div>
+    <div>
+      {/* Journey Progress Nav */}
+      <div className="journey-steps-bar">
+        <Link to="/destinos" className="journey-step">1. Destinos</Link>
+        <span className="journey-step-sep">&rarr;</span>
+        <Link to={`/pacotes?destination=${encodeURIComponent(pkg.destination)}`} className="journey-step">2. Pacotes em {pkg.destination}</Link>
+        <span className="journey-step-sep">&rarr;</span>
+        <span className="journey-step active">3. Detalhes: {pkg.title}</span>
       </div>
 
-      {/* Content Grid */}
-      <div className="container-custom mt-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      {/* Hero Section */}
+      <section 
+        className="hero" 
+        style={{
+          backgroundImage: `linear-gradient(rgba(15,23,12,0.45), rgba(15,23,12,0.75)), url('${pkg.image_url}')`,
+          minHeight: '440px',
+        }}
+      >
+        <div className="hero-bg-overlay"></div>
+        <div className="hero-content">
+          <span className="badge">ROTEIRO EXCLUSIVO VELUNTU</span>
+          <h1 className="hero-title" style={{ fontSize: '3rem', margin: '8px 0' }}>{pkg.title}</h1>
+          <p className="hero-subtitle">
+            {pkg.destination} • {pkg.duration_days} dias e {Math.max(1, pkg.duration_days - 1)} noites de imersão de alto padrão
+          </p>
+        </div>
+      </section>
+
+      {/* Detalhes do Roteiro */}
+      <section className="section" style={{ backgroundColor: 'var(--bg-main, #FAF8F5)', paddingTop: '50px', paddingBottom: '90px' }}>
+        <div className="container">
           
-          {/* Left / Main Details */}
-          <div className="lg:col-span-2 space-y-10">
+          <div className="detail-layout">
             
-            {/* Description */}
-            <div className="p-8 rounded-2xl bg-[#0e1424] border border-white/5 space-y-4">
-              <h2 className="font-serif text-2xl font-bold text-[#f3e5ab]">Sobre a Experiência</h2>
-              <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-line">
-                {pkg.description}
-              </p>
-            </div>
-
-            {/* Included Services */}
-            <div className="p-8 rounded-2xl bg-[#0e1424] border border-white/5 space-y-6">
-              <h2 className="font-serif text-2xl font-bold text-[#f3e5ab]">Inclusões de Alto Padrão</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {services.length > 0 ? (
-                  services.map((srv, idx) => (
-                    <div key={idx} className="flex items-start gap-3 p-3.5 rounded-xl bg-white/5 border border-white/5">
-                      <div className="w-6 h-6 rounded-full bg-[#d4af37]/20 border border-[#d4af37]/40 flex items-center justify-center shrink-0 mt-0.5">
-                        <Check className="w-3.5 h-3.5 text-[#d4af37]" />
-                      </div>
-                      <span className="text-xs text-slate-200 font-medium leading-relaxed">{srv}</span>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-xs text-slate-400">Todos os transfers, hospedagem 5 estrelas e guias privativos inclusos.</p>
-                )}
-              </div>
-            </div>
-
-            {/* VIP Guarantee */}
-            <div className="p-6 rounded-2xl bg-[#0a1626] border border-[#d4af37]/30 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-[#d4af37]/20 flex items-center justify-center text-[#d4af37] shrink-0">
-                <ShieldCheck className="w-6 h-6" />
-              </div>
-              <div>
-                <h4 className="font-serif text-lg font-bold text-white">Garantia Veluntu Black</h4>
-                <p className="text-xs text-slate-300">
-                  Assistência 24h em português, seguros de viagem com cobertura internacional integral e cancelamento flexível.
+            {/* Coluna Principal: Descrição e Itens */}
+            <div>
+              <div className="detail-content-card">
+                <span className="section-tag">SOBRE ESTA EXPEDIÇÃO</span>
+                <h2 style={{ fontFamily: 'var(--font-heading)', color: '#17320B', fontSize: '2rem', marginBottom: '18px' }}>
+                  A Experiência Completa
+                </h2>
+                
+                <p style={{ fontSize: '1.05rem', lineHeight: '1.8', color: '#334155', marginBottom: '28px' }}>
+                  {pkg.description}
                 </p>
+
+                <h3 style={{ fontFamily: 'var(--font-heading)', color: '#17320B', fontSize: '1.35rem', marginBottom: '16px' }}>
+                  Serviços e Exclusividades Inclusas
+                </h3>
+
+                <div className="detail-included-grid">
+                  {services.map((item, idx) => (
+                    <div key={idx} className="detail-inc-item">
+                      <span className="inc-check">✓</span>
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div style={{ marginTop: '36px', padding: '24px', background: '#F4F7F2', borderRadius: '12px', borderLeft: '4px solid #c99738' }}>
+                  <h4 style={{ color: '#17320B', margin: '0 0 8px', fontSize: '1.1rem' }}>Personalização Total do Roteiro</h4>
+                  <p style={{ margin: 0, fontSize: '0.95rem', color: '#555', lineHeight: '1.6' }}>
+                    Todos os nossos pacotes podem ser ajustados com noites extras, alteração de lodges, adição de voos panorâmicos e passeios privativos sob consulta.
+                  </p>
+                </div>
               </div>
             </div>
 
-          </div>
+            {/* Ficha Técnica e Bloco de Destaque de Preço */}
+            <div>
+              <div className="detail-spec-card">
+                <h3 style={{ fontFamily: 'var(--font-heading)', color: '#141414', fontSize: '1.5rem', marginBottom: '20px' }}>
+                  Especificações da Viagem
+                </h3>
 
-          {/* Right / Booking Form Card */}
-          <div>
-            <div className="sticky top-28 p-8 rounded-2xl bg-[#0e1424] border border-[#d4af37]/40 shadow-2xl shadow-[#d4af37]/10">
-              
-              <div className="border-b border-white/10 pb-6 mb-6">
-                <span className="text-xs text-slate-400 uppercase tracking-widest block">Investimento Privativo</span>
-                <div className="flex items-baseline gap-2 mt-1">
-                  <span className="font-serif text-3xl font-bold text-[#d4af37]">
-                    {pkg.currency} ${parseFloat(pkg.price).toLocaleString('pt-BR')}
+                <div className="spec-item">
+                  <span className="spec-icon">✦</span>
+                  <div className="spec-content">
+                    <strong>Destino Principal</strong>
+                    <span>{pkg.destination}</span>
+                  </div>
+                </div>
+
+                <div className="spec-item">
+                  <span className="spec-icon">✦</span>
+                  <div className="spec-content">
+                    <strong>Duração da Expedição</strong>
+                    <span>{pkg.duration_days} dias / {Math.max(1, pkg.duration_days - 1)} noites</span>
+                  </div>
+                </div>
+
+                <div className="spec-item">
+                  <span className="spec-icon">✦</span>
+                  <div className="spec-content">
+                    <strong>Tamanho do Grupo</strong>
+                    <span>Até {pkg.max_participants || 8} pessoas (Privativo)</span>
+                  </div>
+                </div>
+
+                <div className="spec-item">
+                  <span className="spec-icon">✦</span>
+                  <div className="spec-content">
+                    <strong>Inclusões VIP</strong>
+                    <span style={{ fontSize: '13px', lineHeight: '1.6' }}>
+                      {services.length > 0 ? services.join(' • ') : 'Hospedagens de luxo 5 estrelas, guias especializados e traslados privativos inclusos.'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bloco de Destaque com Alternador de Preço */}
+              <div className="detail-cta-card">
+                <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '14px', marginBottom: '14px' }}>
+                  <span style={{ fontSize: '11px', color: '#c99738', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                    Simulação de Cotação
                   </span>
-                  <span className="text-xs text-slate-400">/ por pessoa</span>
+                  <div className="travelers-toggle-bar" style={{ margin: 0, background: 'rgba(255,255,255,0.1)' }}>
+                    <button
+                      type="button"
+                      onClick={() => setTravelers(2)}
+                      className={`travelers-toggle-btn ${travelers === 2 ? 'active' : ''}`}
+                      style={{ color: travelers === 2 ? '#17320B' : '#FFF', background: travelers === 2 ? '#c99738' : 'transparent' }}
+                    >
+                      2 Pessoas (Casal)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setTravelers(1)}
+                      className={`travelers-toggle-btn ${travelers === 1 ? 'active' : ''}`}
+                      style={{ color: travelers === 1 ? '#17320B' : '#FFF', background: travelers === 1 ? '#c99738' : 'transparent' }}
+                    >
+                      1 Pessoa (Solo)
+                    </button>
+                  </div>
+                </div>
+
+                <div className="detail-price-box">
+                  <h4>{travelers === 2 ? 'Valor Total do Pacote (Para 2 Pessoas)' : 'Valor Individual (1 Pessoa)'}</h4>
+                  <div className="detail-price-val">
+                    {pkg.currency || 'R$'} {calculatedPrice.toLocaleString('pt-BR')}
+                  </div>
+                  <span className="detail-price-hint">
+                    {travelers === 2
+                      ? `Equivalente a ${pkg.currency || 'R$'} ${(calculatedPrice / 2).toLocaleString('pt-BR')} por pessoa com acomodação dupla`
+                      : 'Acomodação privativa com concierge'}
+                  </span>
+                </div>
+
+                <Link
+                  to={`/planejar?destination=${encodeURIComponent(pkg.destination)}&package=${encodeURIComponent(pkg.title)}&travelers=${travelers}`}
+                  className="btn btn-primary"
+                  style={{ width: '100%', padding: '16px', fontSize: '15px', textAlign: 'center', marginBottom: '12px' }}
+                >
+                  Planejar & Escolher Mês &rarr;
+                </Link>
+
+                <div style={{ textAlign: 'center', fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
+                  Garantia de atendimento de concierge Veluntu 24/7
                 </div>
               </div>
 
-              {successMsg ? (
-                <div className="p-6 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-center space-y-3">
-                  <Sparkles className="w-10 h-10 text-emerald-400 mx-auto" />
-                  <h3 className="font-serif text-lg font-bold text-emerald-300">Solicitação Recebida!</h3>
-                  <p className="text-xs text-slate-300 leading-relaxed">{successMsg}</p>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">Seu Nome Completo</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Ex: Carlos Eduardo"
-                      value={form.client_name}
-                      onChange={(e) => setForm({ ...form, client_name: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#080c16] border border-white/10 text-sm text-white focus:border-[#d4af37] outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">E-mail para Contato</label>
-                    <input
-                      type="email"
-                      required
-                      placeholder="seuemail@exemplo.com"
-                      value={form.client_email}
-                      onChange={(e) => setForm({ ...form, client_email: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#080c16] border border-white/10 text-sm text-white focus:border-[#d4af37] outline-none"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-300 mb-1.5">Telefone / WhatsApp</label>
-                      <input
-                        type="tel"
-                        placeholder="+55 11 9..."
-                        value={form.client_phone}
-                        onChange={(e) => setForm({ ...form, client_phone: e.target.value })}
-                        className="w-full px-4 py-2.5 rounded-xl bg-[#080c16] border border-white/10 text-sm text-white focus:border-[#d4af37] outline-none"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-300 mb-1.5">Viajantes</label>
-                      <input
-                        type="number"
-                        min="1"
-                        max="20"
-                        value={form.participants_count}
-                        onChange={(e) => setForm({ ...form, participants_count: parseInt(e.target.value) || 1 })}
-                        className="w-full px-4 py-2.5 rounded-xl bg-[#080c16] border border-white/10 text-sm text-white focus:border-[#d4af37] outline-none"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">Data Prevista de Embarque</label>
-                    <input
-                      type="date"
-                      value={form.travel_date}
-                      onChange={(e) => setForm({ ...form, travel_date: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#080c16] border border-white/10 text-sm text-white focus:border-[#d4af37] outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">Observações ou Preferências</label>
-                    <textarea
-                      rows="2"
-                      placeholder="Ex: Aniversário de casamento, preferências de acomodação..."
-                      value={form.notes}
-                      onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                      className="w-full px-4 py-2 rounded-xl bg-[#080c16] border border-white/10 text-xs text-white focus:border-[#d4af37] outline-none resize-none"
-                    ></textarea>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className="w-full btn-gold py-3.5 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg mt-2"
-                  >
-                    {submitting ? (
-                      <span>Enviando...</span>
-                    ) : (
-                      <>
-                        <Send className="w-3.5 h-3.5" />
-                        <span>Solicitar Roteiro VIP</span>
-                      </>
-                    )}
-                  </button>
-                </form>
-              )}
-
             </div>
+
           </div>
 
         </div>
-      </div>
-
+      </section>
     </div>
   );
 }

@@ -2,6 +2,48 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../../services/api';
 
+const destinations = [
+  {
+    id: 'africadosul',
+    title: 'África do Sul',
+    badge: 'Safári & Vinhedos',
+    image: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1200&q=80',
+    description: 'Encontros com a vida selvagem no Kruger, degustações em adegas históricas e a beleza cosmopolita de Cape Town.',
+    highlights: [
+      'Lodges Privativos na Savana',
+      'Rota dos Vinhos em Franschhoek',
+      'Praias e Montanha da Mesa'
+    ],
+    filter: 'África do Sul'
+  },
+  {
+    id: 'egito',
+    title: 'Egito',
+    badge: 'História & Navegação',
+    image: 'https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?auto=format&fit=crop&w=1200&q=80',
+    description: 'Cruzeiros privativos pelo Rio Nilo, pirâmides milenares e acesso exclusivo a templos acompanhado de egiptólogos.',
+    highlights: [
+      'Navegação Dahabiya no Nilo',
+      'Templos de Luxor e Aswan',
+      'Mar Vermelho e Oásis'
+    ],
+    filter: 'Egito'
+  },
+  {
+    id: 'madagascar',
+    title: 'Madagascar',
+    badge: 'Natureza Rara',
+    image: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=1200&q=80',
+    description: 'A magia da Alameda dos Baobás, santuários de lêmures e praias intocadas de águas cristalinas em Nosy Be.',
+    highlights: [
+      'Alameda dos Baobás Milenares',
+      'Expedições na Vida Selvagem',
+      'Resort Privativo em Nosy Be'
+    ],
+    filter: 'Madagascar'
+  },
+];
+
 export default function Home() {
   const [packages, setPackages] = useState([]);
 
@@ -51,64 +93,35 @@ export default function Home() {
           </div>
 
           <div className="destinos-grid">
-            {/* África do Sul */}
-            <article className="destino-card">
-              <div className="destino-img-wrapper">
-                <img src="https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1200&q=80" alt="África do Sul - Safári e Savana" loading="lazy" />
-                <span className="destino-badge">Safári &amp; Vinhedos</span>
-              </div>
-              <div className="destino-body">
-                <h3 className="destino-title">África do Sul</h3>
-                <p className="destino-text">Encontros com a vida selvagem no Kruger, degustações em adegas históricas e a beleza cosmopolita de Cape Town.</p>
-                <div className="destino-highlights">
-                  <span><i className="icon">✦</i> Lodges Privativos na Savana</span>
-                  <span><i className="icon">✦</i> Rota dos Vinhos em Franschhoek</span>
-                  <span><i className="icon">✦</i> Praias e Montanha da Mesa</span>
+            {destinations.map((dest) => (
+              <article key={dest.id} className="destino-card">
+                <Link to={`/pacotes?destination=${encodeURIComponent(dest.filter)}`} className="destino-img-wrapper" style={{ display: 'block' }}>
+                  <img src={dest.image} alt={dest.title} loading="lazy" />
+                  <span className="destino-badge">{dest.badge}</span>
+                </Link>
+                <div className="destino-body">
+                  <h3 className="destino-title">
+                    <Link to={`/pacotes?destination=${encodeURIComponent(dest.filter)}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                      {dest.title}
+                    </Link>
+                  </h3>
+                  <p className="destino-text">{dest.description}</p>
+                  <div className="destino-highlights">
+                    {dest.highlights.map((h, i) => (
+                      <span key={i}><i className="icon">✦</i> {h}</span>
+                    ))}
+                  </div>
+                  <Link to={`/pacotes?destination=${encodeURIComponent(dest.filter)}`} className="btn btn-primary btn-sm" style={{ width: '100%', textAlign: 'center' }}>
+                    Explorar {dest.title} &rarr;
+                  </Link>
                 </div>
-                <Link to="/destinos" className="btn-link">Explorar África do Sul &rarr;</Link>
-              </div>
-            </article>
-
-            {/* Egito */}
-            <article className="destino-card">
-              <div className="destino-img-wrapper">
-                <img src="https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?auto=format&fit=crop&w=1200&q=80" alt="Egito - Pirâmides de Gizé" loading="lazy" />
-                <span className="destino-badge">História &amp; Navegação</span>
-              </div>
-              <div className="destino-body">
-                <h3 className="destino-title">Egito</h3>
-                <p className="destino-text">Cruzeiros privativos pelo Rio Nilo, pirâmides milenares e acesso exclusivo a templos acompanhado de egiptólogos.</p>
-                <div className="destino-highlights">
-                  <span><i className="icon">✦</i> Navegação Dahabiya no Nilo</span>
-                  <span><i className="icon">✦</i> Templos de Luxor e Aswan</span>
-                  <span><i className="icon">✦</i> Mar Vermelho e Oásis</span>
-                </div>
-                <Link to="/destinos" className="btn-link">Explorar Egito &rarr;</Link>
-              </div>
-            </article>
-
-            {/* Madagascar */}
-            <article className="destino-card">
-              <div className="destino-img-wrapper">
-                <img src="https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=1200&q=80" alt="Madagascar - Baobás e Praias" loading="lazy" />
-                <span className="destino-badge">Natureza Rara</span>
-              </div>
-              <div className="destino-body">
-                <h3 className="destino-title">Madagascar</h3>
-                <p className="destino-text">A magia da Alameda dos Baobás, santuários de lêmures e praias intocadas de águas cristalinas em Nosy Be.</p>
-                <div className="destino-highlights">
-                  <span><i className="icon">✦</i> Alameda dos Baobás Milenares</span>
-                  <span><i className="icon">✦</i> Expedições na Vida Selvagem</span>
-                  <span><i className="icon">✦</i> Resort Privativo em Nosy Be</span>
-                </div>
-                <Link to="/destinos" className="btn-link">Explorar Madagascar &rarr;</Link>
-              </div>
-            </article>
+              </article>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Experiências - Azul Secundário #283346 */}
+      {/* Experiências */}
       <section className="section experiencias-section" id="experiencias">
         <div className="container">
           <div className="section-header text-center">
@@ -128,7 +141,7 @@ export default function Home() {
                 <span className="exp-cat-badge">01. VIDA SELVAGEM</span>
                 <h3 className="exp-cat-title">Safáris Privativos</h3>
                 <p className="exp-cat-desc">Lodges 5 estrelas em reservas privadas com rangers dedicados e safáris de balão.</p>
-                <Link to="/pacotes" className="btn-link-white">Ver Roteiros &rarr;</Link>
+                <Link to="/pacotes?destination=África do Sul" className="btn-link-white">Ver Roteiros &rarr;</Link>
               </div>
             </div>
 
@@ -140,7 +153,7 @@ export default function Home() {
                 <span className="exp-cat-badge">02. CIVILIZAÇÃO</span>
                 <h3 className="exp-cat-title">História &amp; O Nilo</h3>
                 <p className="exp-cat-desc">Cruzeiros em Dahabiyas privativas com egiptólogos renomados e acesso exclusivo a tumbas.</p>
-                <Link to="/pacotes" className="btn-link-white">Ver Roteiros &rarr;</Link>
+                <Link to="/pacotes?destination=Egito" className="btn-link-white">Ver Roteiros &rarr;</Link>
               </div>
             </div>
 
@@ -152,7 +165,7 @@ export default function Home() {
                 <span className="exp-cat-badge">03. GASTRONOMIA</span>
                 <h3 className="exp-cat-title">Cape Winelands</h3>
                 <p className="exp-cat-desc">Degustações privadas em vinícolas centenárias e jantares harmonizados em Stellenbosch.</p>
-                <Link to="/pacotes" className="btn-link-white">Ver Roteiros &rarr;</Link>
+                <Link to="/pacotes?destination=África do Sul" className="btn-link-white">Ver Roteiros &rarr;</Link>
               </div>
             </div>
           </div>
@@ -202,7 +215,7 @@ export default function Home() {
               </div>
             </div>
             <div className="sobre-img-container">
-              <img src="https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1200&q=80" alt="Veluntu Travel Design África" />
+              <img src="/logo_velentu.jpg" alt="Veluntu Travel Design África" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
           </div>
         </div>

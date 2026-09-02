@@ -1,127 +1,215 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Compass, Lock, Mail, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [isRegister, setIsRegister] = useState(false);
+  const [email, setEmail] = useState('admin@veluntu.com');
+  const [password, setPassword] = useState('admin123');
+  
+  // Register state
+  const [regData, setRegData] = useState({
+    agency_name: '',
+    agency_email: '',
+    agency_phone: '',
+    admin_name: '',
+    admin_email: '',
+    admin_password: '',
+  });
+
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, register } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
-
     try {
       await login(email, password);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.message || 'Erro ao autenticar. Verifique suas credenciais.');
+      setError(err.message || 'Credenciais inválidas.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      await register(regData);
+      navigate('/dashboard');
+    } catch (err) {
+      setError(err.message || 'Erro ao registrar agência.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center bg-[#070a12] px-4 py-12">
-      <div className="w-full max-w-md">
+    <div style={{ minHeight: '100vh', background: '#0D1D06', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
+      
+      <div style={{ width: '100%', maxWidth: '480px' }}>
         
-        {/* Card */}
-        <div className="p-8 md:p-10 rounded-3xl bg-[#0c1220] border border-[#d4af37]/30 shadow-2xl shadow-[#d4af37]/10">
+        <Link to="/" style={{ color: 'rgba(250, 248, 245, 0.7)', fontSize: '13px', display: 'inline-block', marginBottom: '20px' }}>
+          &larr; Voltar para a Vitrine Veluntu
+        </Link>
+
+        <div style={{ background: '#FFFFFF', borderRadius: '12px', padding: '40px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)' }}>
           
-          <div className="text-center mb-8">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#d4af37] to-[#aa851e] flex items-center justify-center shadow-lg shadow-[#d4af37]/20 mx-auto mb-4">
-              <Compass className="w-7 h-7 text-[#0a0e17]" />
-            </div>
-            <h1 className="font-serif text-2xl md:text-3xl font-bold text-white tracking-wide">
-              Portal da Agência
+          {/* Header */}
+          <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+            <h1 style={{ fontFamily: 'var(--font-heading)', color: '#17320B', fontSize: '28px', fontWeight: '800', letterSpacing: '4px', marginBottom: '4px' }}>
+              VELUNTU
             </h1>
-            <p className="text-xs text-slate-400 mt-1">
-              Acesse o painel SaaS de gestão de roteiros e clientes
+            <p style={{ color: '#CC7A00', fontSize: '11px', fontWeight: '700', letterSpacing: '2px', textTransform: 'uppercase' }}>
+              Plataforma SaaS para Agências de Luxo
             </p>
           </div>
 
           {error && (
-            <div className="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-start gap-3 text-rose-300 text-xs">
-              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-              <span>{error}</span>
+            <div style={{ background: '#fee2e2', border: '1px solid #ef4444', color: '#991b1b', padding: '12px', borderRadius: '6px', marginBottom: '20px', fontSize: '13px' }}>
+              {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                E-mail Corporativo
-              </label>
-              <div className="relative">
-                <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
+          {!isRegister ? (
+            /* Login Form */
+            <form onSubmit={handleLogin}>
+              <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', color: '#141414', marginBottom: '20px', textAlign: 'center' }}>
+                Entrar no Painel da Agência
+              </h2>
+
+              <div className="form-group" style={{ marginBottom: '18px' }}>
+                <label>E-mail do Administrador</label>
                 <input
                   type="email"
                   required
-                  placeholder="admin@veluntu.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#080c16] border border-white/10 text-sm text-white placeholder-slate-600 focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] outline-none transition-all"
+                  placeholder="admin@veluntu.com"
                 />
               </div>
-            </div>
 
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-semibold text-slate-300">
-                  Senha de Acesso
-                </label>
-                <a href="#recuperar" className="text-[11px] text-[#d4af37] hover:underline">
-                  Esqueceu a senha?
-                </a>
-              </div>
-              <div className="relative">
-                <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
+              <div className="form-group" style={{ marginBottom: '22px' }}>
+                <label>Senha de Acesso</label>
                 <input
                   type="password"
                   required
-                  placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#080c16] border border-white/10 text-sm text-white placeholder-slate-600 focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] outline-none transition-all"
+                  placeholder="••••••••"
                 />
               </div>
-            </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full btn-gold py-3.5 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl mt-4"
-            >
-              {loading ? (
-                <span>Autenticando...</span>
-              ) : (
-                <>
-                  <span>Entrar no Painel</span>
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              )}
-            </button>
-          </form>
+              <button type="submit" disabled={loading} className="btn btn-primary" style={{ width: '100%', marginBottom: '20px' }}>
+                {loading ? 'Entrando...' : 'Entrar na Plataforma'}
+              </button>
 
-          <div className="mt-8 pt-6 border-t border-white/5 text-center text-xs text-slate-400">
-            <span>Ainda não é uma agência parceira? </span>
-            <Link to="/registro" className="text-[#d4af37] font-semibold hover:underline">
-              Cadastre-se aqui
-            </Link>
-          </div>
-        </div>
+              <div style={{ background: '#f8f9fa', border: '1px dashed #c99738', borderRadius: '6px', padding: '12px', fontSize: '12px', color: '#333', lineHeight: '1.5', marginBottom: '20px' }}>
+                <strong>Acesso Demonstrativo Liberado:</strong><br />
+                E-mail: <code>admin@veluntu.com</code> | Senha: <code>admin123</code>
+              </div>
 
-        {/* Credentials Tip */}
-        <div className="mt-4 p-3 rounded-xl bg-white/5 border border-white/5 text-center text-[11px] text-slate-400">
-          Credencial demonstrativa: <span className="text-[#f3e5ab] font-medium">admin@veluntu.com</span> / <span className="text-[#f3e5ab] font-medium">admin123</span>
+              <p style={{ textAlign: 'center', fontSize: '13px', color: '#666' }}>
+                Sua agência ainda não tem conta?{' '}
+                <button
+                  type="button"
+                  onClick={() => setIsRegister(true)}
+                  style={{ background: 'none', border: 'none', color: '#CC7A00', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline' }}
+                >
+                  Registre-se agora
+                </button>
+              </p>
+            </form>
+          ) : (
+            /* Register Form */
+            <form onSubmit={handleRegister}>
+              <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', color: '#141414', marginBottom: '20px', textAlign: 'center' }}>
+                Cadastrar Nova Agência
+              </h2>
+
+              <div className="form-group" style={{ marginBottom: '14px' }}>
+                <label>Nome da Agência</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Ex: Aurora Luxury Travel"
+                  value={regData.agency_name}
+                  onChange={(e) => setRegData({ ...regData, agency_name: e.target.value })}
+                />
+              </div>
+
+              <div className="form-group" style={{ marginBottom: '14px' }}>
+                <label>E-mail Corporativo da Agência</label>
+                <input
+                  type="email"
+                  required
+                  placeholder="contato@agencia.com"
+                  value={regData.agency_email}
+                  onChange={(e) => setRegData({ ...regData, agency_email: e.target.value })}
+                />
+              </div>
+
+              <div className="form-group" style={{ marginBottom: '14px' }}>
+                <label>Nome do Administrador</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Seu Nome Completo"
+                  value={regData.admin_name}
+                  onChange={(e) => setRegData({ ...regData, admin_name: e.target.value })}
+                />
+              </div>
+
+              <div className="form-group" style={{ marginBottom: '14px' }}>
+                <label>E-mail de Login do Administrador</label>
+                <input
+                  type="email"
+                  required
+                  placeholder="admin@agencia.com"
+                  value={regData.admin_email}
+                  onChange={(e) => setRegData({ ...regData, admin_email: e.target.value })}
+                />
+              </div>
+
+              <div className="form-group" style={{ marginBottom: '20px' }}>
+                <label>Senha de Acesso (Mín. 6 dígitos)</label>
+                <input
+                  type="password"
+                  required
+                  minLength={6}
+                  placeholder="••••••••"
+                  value={regData.admin_password}
+                  onChange={(e) => setRegData({ ...regData, admin_password: e.target.value })}
+                />
+              </div>
+
+              <button type="submit" disabled={loading} className="btn btn-primary" style={{ width: '100%', marginBottom: '16px' }}>
+                {loading ? 'Criando Conta...' : 'Cadastrar Agência &rarr;'}
+              </button>
+
+              <p style={{ textAlign: 'center', fontSize: '13px', color: '#666' }}>
+                Já possui uma conta?{' '}
+                <button
+                  type="button"
+                  onClick={() => setIsRegister(false)}
+                  style={{ background: 'none', border: 'none', color: '#CC7A00', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline' }}
+                >
+                  Fazer Login
+                </button>
+              </p>
+            </form>
+          )}
+
         </div>
 
       </div>
+
     </div>
   );
 }

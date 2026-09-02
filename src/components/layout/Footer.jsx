@@ -32,7 +32,6 @@ export default function Footer() {
               <li><Link to="/destinos">África do Sul</Link></li>
               <li><Link to="/destinos">Egito</Link></li>
               <li><Link to="/destinos">Madagascar</Link></li>
-              <li><Link to="/destinos">Tanzânia</Link></li>
             </ul>
           </div>
 
