@@ -6,6 +6,7 @@ import {
   createPackage,
   updatePackage,
   deletePackage,
+  fetchRemotePackages,
 } from '../../data/packagesStore';
 
 const darkInput = {
@@ -56,11 +57,17 @@ export default function PackagesAdmin() {
   const [previewImg, setPreviewImg] = useState('');
   const toastTimer = useRef(null);
 
-  // Carrega pacotes do store local
+  // Carrega pacotes do store local e sincroniza com o Supabase
   const loadPackages = (q = search) => {
     const result = q.trim() ? searchPackages(q) : getAllPackages();
     setPackages(result);
   };
+
+  useEffect(() => {
+    fetchRemotePackages();
+    window.addEventListener('veluntu_packages_updated', () => loadPackages());
+    return () => window.removeEventListener('veluntu_packages_updated', () => loadPackages());
+  }, []);
 
   useEffect(() => {
     loadPackages(search);
