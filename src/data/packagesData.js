@@ -8,7 +8,7 @@ export const curatedPackages = [
     priceForTwo: 24000000,
     pricePerPerson: 12465000,
     currency: 'R$',
-    image_url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80',
+    image_url: 'https://i.pinimg.com/1200x/7c/ac/9b/7cac9bee8a7c5e5fbf4878b4a1c75d94.jpg',
     description: 'Roteiro de contemplação e praias intocadas pelo arquipélago de Nosy Be e ilhas privadas de Tsarabanjina com vilas ecológicas.',
     included_services: [
       'Hospedagem 5 estrelas',
