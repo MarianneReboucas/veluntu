@@ -7,7 +7,7 @@
 import { curatedPackages } from './packagesData';
 import { supabase } from '../services/supabaseClient';
 
-const STORAGE_KEY = 'veluntu_packages_store_cloud_v1';
+const STORAGE_KEY = 'veluntu_packages_store_cloud_v2';
 
 /** Busca pacotes atualizados direto do Supabase */
 export async function fetchRemotePackages() {
