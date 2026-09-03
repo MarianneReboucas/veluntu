@@ -109,11 +109,11 @@ export default function PackagesAdmin() {
     setFormError('');
     try {
       if (editingId) {
-        updatePackage(editingId, formData);
-        showToast('Roteiro atualizado com sucesso!');
+        await updatePackage(editingId, formData);
+        showToast('Roteiro atualizado com sucesso no banco!');
       } else {
-        createPackage(formData);
-        showToast('Novo roteiro criado e publicado!');
+        await createPackage(formData);
+        showToast('Novo roteiro publicado com sucesso!');
       }
       setModalOpen(false);
       loadPackages();
@@ -124,9 +124,9 @@ export default function PackagesAdmin() {
     }
   };
 
-  const handleDelete = (id, title) => {
+  const handleDelete = async (id, title) => {
     if (!window.confirm(`Excluir o roteiro "${title}"?\n\nEsta ação não pode ser desfeita.`)) return;
-    deletePackage(id);
+    await deletePackage(id);
     loadPackages();
     showToast('Roteiro excluído do catálogo.');
   };
