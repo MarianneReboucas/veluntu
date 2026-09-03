@@ -8,6 +8,18 @@ const statusStyle = (status) => {
   return { background: 'rgba(251,191,36,0.1)', color: '#fbbf24', border: '1px solid rgba(251,191,36,0.3)' };
 };
 
+const darkInput = {
+  width: '100%',
+  padding: '10px 14px',
+  borderRadius: '10px',
+  background: '#080c16',
+  border: '1px solid rgba(255,255,255,0.1)',
+  fontSize: '13px',
+  color: '#FFFFFF',
+  outline: 'none',
+  boxSizing: 'border-box',
+};
+
 export default function ReservationsAdmin() {
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
