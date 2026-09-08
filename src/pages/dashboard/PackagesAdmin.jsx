@@ -205,7 +205,7 @@ export default function PackagesAdmin() {
             </button>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
+          <div className="packages-admin-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
             {packages.map((pkg) => (
               <div
                 key={pkg.id}

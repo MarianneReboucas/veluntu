@@ -65,7 +65,7 @@ export default function Overview() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
 
           {/* Key Metrics */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
+          <div className="overview-kpi-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
 
             {/* Receita Total */}
             <div style={s.card}>

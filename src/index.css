@@ -3777,6 +3777,16 @@ img {
 }
 
 @media (max-width: 992px) {
+  .overview-kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 14px !important;
+  }
+
+  .packages-admin-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px !important;
+  }
+
   .dashboard-sidebar {
     position: fixed !important;
     top: 0 !important;
@@ -3825,6 +3835,19 @@ img {
     max-height: 90vh !important;
     overflow-y: auto !important;
     padding: 20px 16px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Força todos os cards do dashboard na vertical total no mobile */
+  .overview-kpi-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .packages-admin-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
   }
 }
 
