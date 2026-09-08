@@ -74,11 +74,28 @@ export function getPackageById(id) {
   return getAllPackages().find((p) => String(p.id) === String(id)) || null;
 }
 
+/** Obtém o ID da agência logada ou agência padrão */
+export function getCurrentAgencyId() {
+  try {
+    const raw = localStorage.getItem('veluntu_agency');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed?.id) return parsed.id;
+    }
+  } catch (e) {
+    console.warn('[packagesStore] Erro ao obter agency_id do storage:', e);
+  }
+  // ID da agência principal Serenget Luxo / Veluntu no Supabase
+  return '66ec288e-4d89-4603-be6d-ef1d9a3901ad';
+}
+
 /** Cria um novo pacote e envia para o Supabase */
 export async function createPackage(data) {
+  const agencyId = getCurrentAgencyId();
   const all = getAllPackages();
   const newPkg = normalizePackage({
     ...data,
+    agency_id: agencyId,
     id: `pkg-${Date.now()}`,
     created_at: new Date().toISOString(),
     status: data.status || 'active',
@@ -88,29 +105,35 @@ export async function createPackage(data) {
   saveAll(updated);
 
   try {
+    const payload = {
+      agency_id: agencyId,
+      title: newPkg.title,
+      description: newPkg.description,
+      destination: newPkg.destination,
+      price: newPkg.price,
+      currency: newPkg.currency,
+      duration_days: newPkg.duration_days,
+      included_services: newPkg.included_services,
+      max_participants: newPkg.max_participants,
+      image_url: newPkg.image_url,
+      status: newPkg.status,
+    };
+
     const { data: inserted, error } = await supabase
       .from('packages')
-      .insert([{
-        title: newPkg.title,
-        description: newPkg.description,
-        destination: newPkg.destination,
-        price: newPkg.price,
-        currency: newPkg.currency,
-        duration_days: newPkg.duration_days,
-        included_services: newPkg.included_services,
-        max_participants: newPkg.max_participants,
-        image_url: newPkg.image_url,
-        status: newPkg.status,
-      }])
+      .insert([payload])
       .select()
       .maybeSingle();
 
-    if (!error && inserted) {
+    if (error) {
+      console.error('[packagesStore] Erro ao persistir no Supabase:', error.message);
+    } else if (inserted) {
       const live = updated.map((p) => (p.id === newPkg.id ? normalizePackage(inserted) : p));
       saveAll(live);
+      return normalizePackage(inserted);
     }
   } catch (err) {
-    console.warn('[packagesStore] Erro ao persistir no Supabase:', err.message);
+    console.error('[packagesStore] Exceção ao persistir no Supabase:', err.message);
   }
 
   return newPkg;
@@ -118,17 +141,19 @@ export async function createPackage(data) {
 
 /** Atualiza um pacote existente no Supabase e no cache local */
 export async function updatePackage(id, data) {
+  const agencyId = getCurrentAgencyId();
   const all = getAllPackages();
   const idx = all.findIndex((p) => String(p.id) === String(id));
   if (idx === -1) throw new Error('Pacote não encontrado.');
 
-  const updatedItem = normalizePackage({ ...all[idx], ...data, id });
+  const updatedItem = normalizePackage({ ...all[idx], ...data, id, agency_id: agencyId });
   const updated = [...all];
   updated[idx] = updatedItem;
   saveAll(updated);
 
   try {
     const payload = {
+      agency_id: agencyId,
       title: updatedItem.title,
       description: updatedItem.description,
       destination: updatedItem.destination,
@@ -147,7 +172,7 @@ export async function updatePackage(id, data) {
       await supabase.from('packages').update(payload).ilike('title', updatedItem.title);
     }
   } catch (err) {
-    console.warn('[packagesStore] Erro ao atualizar no Supabase:', err.message);
+    console.error('[packagesStore] Erro ao atualizar no Supabase:', err.message);
   }
 
   return updatedItem;
@@ -161,12 +186,12 @@ export async function deletePackage(id) {
   saveAll(updated);
 
   try {
-    await supabase.from('packages').delete().eq('id', id);
-    if (target?.title) {
+    const res = await supabase.from('packages').delete().eq('id', id);
+    if (res.error && target?.title) {
       await supabase.from('packages').delete().ilike('title', target.title);
     }
   } catch (err) {
-    console.warn('[packagesStore] Erro ao deletar no Supabase:', err.message);
+    console.error('[packagesStore] Erro ao deletar no Supabase:', err.message);
   }
 }
 
