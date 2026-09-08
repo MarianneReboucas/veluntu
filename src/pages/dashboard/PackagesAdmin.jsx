@@ -64,9 +64,19 @@ export default function PackagesAdmin() {
   };
 
   useEffect(() => {
-    fetchRemotePackages();
-    window.addEventListener('veluntu_packages_updated', () => loadPackages());
-    return () => window.removeEventListener('veluntu_packages_updated', () => loadPackages());
+    const init = async () => {
+      const remote = await fetchRemotePackages();
+      if (remote && remote.length > 0) {
+        setPackages(search.trim() ? searchPackages(search) : remote);
+      } else {
+        loadPackages();
+      }
+    };
+    init();
+
+    const handleUpdate = () => loadPackages();
+    window.addEventListener('veluntu_packages_updated', handleUpdate);
+    return () => window.removeEventListener('veluntu_packages_updated', handleUpdate);
   }, []);
 
   useEffect(() => {
