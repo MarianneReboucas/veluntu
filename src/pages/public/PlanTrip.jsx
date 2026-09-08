@@ -769,7 +769,7 @@ export default function PlanTrip() {
                         Planejamento Recebido com Sucesso!
                       </h3>
                       <p style={{ color: '#4b5563', fontSize: '15px', lineHeight: '1.6', maxWidth: '540px', margin: '0 auto 24px' }}>
-                        Nossa equipe de Travel Designers já recebeu todas as suas preferências. Entraremos em contato com você através do e-mail <strong>{clientForm.client_email}</strong> e WhatsApp <strong>{clientForm.client_phone}</strong> com sua proposta personalizada.
+                        Nossa equipe da Veluntu recebeu todas as suas preferências. Entraremos em contato com você através do e-mail <strong>{clientForm.client_email}</strong> e WhatsApp <strong>{clientForm.client_phone}</strong> com sua proposta personalizada.
                       </p>
                       <div style={{ background: '#f8faf7', border: '1px solid #e1e7de', borderRadius: '10px', padding: '16px', maxWidth: '420px', margin: '0 auto 24px', textAlign: 'left', fontSize: '13px', color: '#17320b' }}>
                         <strong>Resumo do seu projeto:</strong><br />
