@@ -3681,16 +3681,51 @@ img {
   }
 
   /* Planejador Mobile */
+  .planner-page-hero {
+    min-height: 160px !important;
+    padding: 24px 16px !important;
+  }
+
+  .planner-page-hero .hero-title {
+    font-size: 1.8rem !important;
+    margin: 4px 0 !important;
+  }
+
+  .planner-page-hero .hero-subtitle {
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+  }
+
+  .planner-main-section {
+    padding-top: 14px !important;
+    padding-bottom: 40px !important;
+  }
+
   .planner-layout {
     grid-template-columns: 1fr !important;
+    margin-top: 0 !important;
   }
 
   .planner-wizard-card {
-    padding: 20px 14px !important;
+    padding: 18px 14px !important;
+    border-radius: 12px !important;
+  }
+
+  .planner-progress {
+    margin-bottom: 20px !important;
+  }
+
+  .planner-step-header {
+    margin-bottom: 18px !important;
   }
 
   .planner-step-header h3 {
-    font-size: 1.4rem !important;
+    font-size: 1.25rem !important;
+    margin-bottom: 4px !important;
+  }
+
+  .planner-step-header p {
+    font-size: 12px !important;
   }
 
   .month-grid-luxury {

@@ -251,7 +251,16 @@ export default function PlanTrip() {
     }
   }, [searchParams]);
 
-  // Controle de avanço com validações claras (sem rolagem forçada ao banner)
+  // Scroll suave para o topo do formulário a cada mudança de etapa
+  const scrollToStepTop = () => {
+    const wizardEl = document.getElementById('plannerWizardTop') || document.querySelector('.planner-wizard-card');
+    if (wizardEl) {
+      const topOffset = wizardEl.getBoundingClientRect().top + window.pageYOffset - 90;
+      window.scrollTo({ top: Math.max(0, topOffset), behavior: 'smooth' });
+    }
+  };
+
+  // Controle de avanço com validações claras e scroll automático para o topo da etapa
   const handleNext = () => {
     if (step === 1 && !preferences.month) {
       alert('Por favor, selecione o mês em que deseja viajar antes de prosseguir.');
@@ -269,7 +278,21 @@ export default function PlanTrip() {
       setSelectedPackage(availablePackages[0]);
     }
     if (step < 5) {
-      setStep(step + 1);
+      setStep((prev) => {
+        const nextStep = prev + 1;
+        setTimeout(scrollToStepTop, 50);
+        return nextStep;
+      });
+    }
+  };
+
+  const handlePrev = () => {
+    if (step > 1) {
+      setStep((prev) => {
+        const prevStep = prev - 1;
+        setTimeout(scrollToStepTop, 50);
+        return prevStep;
+      });
     }
   };
 
@@ -334,31 +357,32 @@ export default function PlanTrip() {
         </span>
       </div>
 
-      {/* Hero Section */}
+      {/* Hero Section - Compacto & Sofisticado */}
       <section
         className="hero planner-page-hero"
         style={{
-          backgroundImage: `linear-gradient(rgba(15,23,12,0.65), rgba(15,23,12,0.85)), url('https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=1800&q=80')`,
-          minHeight: '340px',
+          backgroundImage: `linear-gradient(rgba(15,23,12,0.72), rgba(15,23,12,0.9)), url('https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=1800&q=80')`,
+          minHeight: '220px',
+          padding: '40px 20px',
         }}
       >
         <div className="hero-bg-overlay"></div>
         <div className="hero-content">
-          <span className="badge">CURADORIA VELUNTU TRAVEL DESIGN</span>
-          <h1 className="hero-title" style={{ fontSize: '3rem', margin: '8px 0' }}>Planeje Sua Viagem</h1>
-          <p className="hero-subtitle">
+          <span className="badge" style={{ fontSize: '11px', letterSpacing: '2px', padding: '5px 14px' }}>CURADORIA VELUNTU TRAVEL DESIGN</span>
+          <h1 className="hero-title" style={{ fontSize: '2.4rem', margin: '6px 0', letterSpacing: '1px' }}>Planeje Sua Viagem</h1>
+          <p className="hero-subtitle" style={{ fontSize: '14px', maxWidth: '640px', margin: '0 auto', opacity: 0.9 }}>
             Crie sua jornada personalizada pela África em 5 etapas intuitivas com o toque de exclusividade Veluntu.
           </p>
         </div>
       </section>
 
       {/* Wizard Principal */}
-      <section className="section" style={{ backgroundColor: 'var(--bg-main, #FAF8F5)', paddingTop: '40px', paddingBottom: '90px' }}>
+      <section className="section planner-main-section" style={{ backgroundColor: 'var(--bg-main, #FAF8F5)', paddingTop: '24px', paddingBottom: '70px' }}>
         <div className="container">
           <div className="planner-layout">
             
             {/* Card Principal da Etapa */}
-            <div className="planner-wizard-card">
+            <div className="planner-wizard-card" id="plannerWizardTop">
               
               {/* Barra de Progresso */}
               <div className="planner-progress">
@@ -900,7 +924,7 @@ export default function PlanTrip() {
                   {step > 1 ? (
                     <button
                       type="button"
-                      onClick={() => setStep(step - 1)}
+                      onClick={handlePrev}
                       className="btn btn-outline btn-sm"
                     >
                       &larr; Voltar Etapa
