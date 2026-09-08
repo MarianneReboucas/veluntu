@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <defs>
+    <linearGradient id="bgGrad192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b1220" />
+      <stop offset="100%" stop-color="#060910" />
+    </linearGradient>
+    <linearGradient id="goldGrad192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f5d77f" />
+      <stop offset="50%" stop-color="#c99738" />
+      <stop offset="100%" stop-color="#8c6418" />
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="40" fill="url(#bgGrad192)" />
+  <circle cx="96" cy="96" r="72" fill="none" stroke="url(#goldGrad192)" stroke-width="2" stroke-opacity="0.5" stroke-dasharray="6 4" />
+  <g transform="translate(96, 88) scale(0.48)">
+    <path d="M 0 -130 L 130 0 L 0 130 L -130 0 Z" fill="none" stroke="url(#goldGrad192)" stroke-width="6" opacity="0.6" />
+    <polygon points="0,-105 85,90 -85,90" fill="url(#goldGrad192)" />
+    <polygon points="0,-50 45,70 -45,70" fill="#0b1220" />
+    <circle cx="0" cy="18" r="14" fill="url(#goldGrad192)" />
+  </g>
+  <text x="96" y="162" font-family="'Cinzel', 'Times New Roman', serif" font-size="18" font-weight="700" fill="url(#goldGrad192)" text-anchor="middle" letter-spacing="4">VELUNTU</text>
+</svg>

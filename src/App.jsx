@@ -5,6 +5,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 // Layouts
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
+import PwaInstallPrompt from './components/layout/PwaInstallPrompt';
 
 // Public Pages
 import Home from './pages/public/Home';
@@ -115,6 +116,7 @@ export default function App() {
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        <PwaInstallPrompt />
       </BrowserRouter>
     </AuthProvider>
   );
